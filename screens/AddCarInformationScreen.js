@@ -285,6 +285,25 @@ export default function AddCarInformationScreen({ navigation }) {
     }
   };
 
+  // Function to validate license plate
+  const validateLicensePlate = (licensePlate) => {
+    licensePlate = licensePlate.trim();
+
+    const pattern = /^[a-zA-Z0-9]+$/;
+
+    if (licensePlate.length !== 9) {
+      Alert.alert('Lỗi', 'Biển số xe cần có đúng 9 kí tự');
+      return false;
+    }
+
+    if (!pattern.test(licensePlate)) {
+      Alert.alert('Lỗi', 'Biển số xe chỉ được chứa chữ cái và số');
+      return false;
+    }
+
+    return true;
+  };
+
   const handleSubmit = async () => {
 
     if (
@@ -301,28 +320,14 @@ export default function AddCarInformationScreen({ navigation }) {
       !selectedSeat
     ) {
 
-      // Continue with your submit logic here
-      console.log('Submitting form with:');
-      console.log('License Plate:', licensePlate);
-      console.log('Car Model ID:', carModelId);
-      console.log('Selected Motion Code:', selectedMotionCode);
-      console.log('Selected Fuel Code:', selectedFuelCode);
-      console.log('Selected Parking:', selectedParking);
-      console.log('Selected Period Code:', selectedPeriodCode);
-      console.log('Description:', description);
-      console.log('Selected Brand:', selectedBrand);
-      console.log('Selected Model:', selectedModel);
-      console.log('Selected Year:', selectedYear);
-      console.log('Selected Seat:', selectedSeat);
 
       Alert.alert('Lỗi', 'Vui lòng điền đầy đủ tất cả thông tin');
       return;
     }
 
     // Check if the license plate length is valid
-    if (licensePlate.trim().length !== 9) {
-      Alert.alert('Lỗi', 'Biển số xe có 9 kí tự');
-      return;
+    if (!validateLicensePlate(licensePlate)) {
+      return; // If license plate is invalid, return early
     }
 
 
