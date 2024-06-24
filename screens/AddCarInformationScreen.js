@@ -1,4 +1,4 @@
-import { View, Text, SafeAreaView, ScrollView, Image, TextInput, TouchableOpacity, Alert } from 'react-native';
+import { View, Text, SafeAreaView, ScrollView, Image, TextInput, TouchableOpacity, Alert, ActivityIndicator } from 'react-native';
 import React, { useContext, useEffect, useState } from 'react';
 import { StyleSheet } from 'react-native';
 import { Divider } from 'react-native-paper';
@@ -39,6 +39,7 @@ export default function AddCarInformationScreen({ navigation }) {
   const [parkingLotData, setParkingLotData] = useState([])
 
   const [isLoading, setLoading] = useState(true);
+  const [isLoadButton, setLoadButton] = useState()
 
   const [id, setId] = useState('');
 
@@ -220,7 +221,7 @@ export default function AddCarInformationScreen({ navigation }) {
   };
 
   const handleSubmit = async () => {
-    // Check if all required fields are filled
+
     if (
       !licensePlate ||
       !carModelId ||
@@ -239,12 +240,17 @@ export default function AddCarInformationScreen({ navigation }) {
     }
 
     // Check if the license plate length is valid
-    if (licensePlate.length < 4) {
+    if (licensePlate.trim().length < 4) {
       Alert.alert('Lỗi', 'Biển số xe phải có ít nhất 4 kí tự');
       return;
     }
 
+
+
+
     try {
+      setLoadButton(true);
+
       const response = await axios.post(
         apiCar.registerCar,
         {
@@ -269,6 +275,8 @@ export default function AddCarInformationScreen({ navigation }) {
       navigation.navigate('AddCarPhoto', { carId: incrementedId, based_price: basePrice });
     } catch (error) {
       console.error('Error creating car:', error);
+    } finally {
+      setLoadButton(false);
     }
   };
 
@@ -333,7 +341,7 @@ export default function AddCarInformationScreen({ navigation }) {
 
                 <TextInput
                   clearButtonMode="while-editing"
-                  onChangeText={(licensePlate) => setLicensePlate(licensePlate)}
+                  onChangeText={(licensePlate) => setLicensePlate(licensePlate.trim())}
                   placeholder="Nhập biển số xe"
                   placeholderTextColor="#C5C5C5"
                   style={styles.inputControl}
@@ -566,12 +574,20 @@ export default function AddCarInformationScreen({ navigation }) {
               </View>
               <View style={styles.formAction}>
                 <TouchableOpacity
-                  onPress={handleSubmit}>
-                  <View style={styles.btn}>
-                    <Text style={styles.btnText}>Tiếp tục</Text>
+                  onPress={handleSubmit}
+                  disabled={isLoadButton}
+                  style={[styles.btn, isLoadButton && styles.btnDisabled]}
+                >
+                  <View>
+                    {isLoadButton ? (
+                      <ActivityIndicator color="white" size="small" />
+                    ) : (
+                      <Text style={styles.btnText}>Tiếp tục</Text>
+                    )}
                   </View>
                 </TouchableOpacity>
               </View>
+
             </View>
           </KeyboardAwareScrollView>
 
@@ -722,6 +738,10 @@ const styles = StyleSheet.create({
     lineHeight: 24,
     fontWeight: '600',
     color: '#fff',
+  },
+  btnDisabled: {
+    backgroundColor: '#ccc',
+    borderColor: '#ccc',
   },
   icon: {
     marginRight: 24,

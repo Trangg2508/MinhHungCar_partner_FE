@@ -1,5 +1,5 @@
 import React, { useContext, useState } from 'react';
-import { View, Text, SafeAreaView, ScrollView, Image, TouchableOpacity, StyleSheet, Alert } from 'react-native';
+import { View, Text, SafeAreaView, ScrollView, Image, TouchableOpacity, StyleSheet, Alert, ActivityIndicator } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import { Divider } from 'react-native-paper';
 import { useRoute } from '@react-navigation/native';
@@ -20,6 +20,7 @@ export default function AddCarPhotoScreen({ navigation }) {
         imageURL: null,
     });
     const [smallImages, setSmallImages] = useState([null, null, null, null]);
+    const [isUploading, setIsUploading] = useState(false);
 
     const placeholderImages = [
         require('../assets/front.jpg'),
@@ -56,6 +57,8 @@ export default function AddCarPhotoScreen({ navigation }) {
             Alert.alert('Error', 'Please select all images.');
             return;
         }
+
+        setIsUploading(true);
 
         const formData = new FormData();
         formData.append('car_id', carId);
@@ -99,9 +102,10 @@ export default function AddCarPhotoScreen({ navigation }) {
             } else {
                 Alert.alert('Lỗi', 'Có một vài lỗi xảy ra khi tải lên hình ảnh. Vui lòng thử lại');
             }
+        } finally {
+            setIsUploading(false);
         }
     };
-
 
     return (
         <SafeAreaView style={{ flex: 1, backgroundColor: 'white' }}>
@@ -182,9 +186,13 @@ export default function AddCarPhotoScreen({ navigation }) {
                 </View>
 
                 <View style={styles.action}>
-                    <TouchableOpacity onPress={handleUpload}>
-                        <View style={[styles.btn, (!mainImages.selectedImage || smallImages.some(image => image === null)) && styles.btnDisabled]}>
-                            <Text style={styles.btnText}>Tiếp tục</Text>
+                    <TouchableOpacity onPress={!isUploading ? handleUpload : null} disabled={isUploading}>
+                        <View style={[styles.btn, ((!mainImages.selectedImage || smallImages.some(image => image === null)) || isUploading) && styles.btnDisabled]}>
+                            {isUploading ? (
+                                <ActivityIndicator size="small" color="#FFF" />
+                            ) : (
+                                <Text style={styles.btnText}>Tiếp tục</Text>
+                            )}
                         </View>
                     </TouchableOpacity>
                 </View>
@@ -192,6 +200,7 @@ export default function AddCarPhotoScreen({ navigation }) {
         </SafeAreaView>
     );
 }
+
 const styles = StyleSheet.create({
     container: {
         paddingVertical: 25,

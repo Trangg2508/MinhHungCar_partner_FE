@@ -1,5 +1,5 @@
 import React, { useContext, useState } from 'react';
-import { View, Text, SafeAreaView, ScrollView, Image, TouchableOpacity, StyleSheet, Alert } from 'react-native';
+import { View, Text, SafeAreaView, ScrollView, Image, TouchableOpacity, StyleSheet, Alert, ActivityIndicator } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import { Divider } from 'react-native-paper';
 import { useRoute } from '@react-navigation/native';
@@ -12,7 +12,7 @@ export default function AddCarRegistrationScreen({ navigation }) {
     const { carId, based_price } = route.params;
     const authCtx = useContext(AuthConText);
     const token = authCtx.access_token;
-    console.log('carId: ', carId)
+    console.log('carId: ', carId);
 
     const [form, setForm] = useState({
         images: [
@@ -20,8 +20,7 @@ export default function AddCarRegistrationScreen({ navigation }) {
             { field: 'licenseBack', uri: '' },
         ],
     });
-
-
+    const [loading, setLoading] = useState(false);
 
     const pickImageFromLibrary = async (field) => {
         const result = await ImagePicker.launchImageLibraryAsync({
@@ -39,13 +38,14 @@ export default function AddCarRegistrationScreen({ navigation }) {
         }
     };
 
-
     const handleUpload = async () => {
         const { images } = form;
         if (images.some(image => !image.uri)) {
             Alert.alert('Error', 'Please select all images.');
             return;
         }
+
+        setLoading(true);
 
         const formData = new FormData();
         formData.append('car_id', carId);
@@ -69,10 +69,10 @@ export default function AddCarRegistrationScreen({ navigation }) {
             navigation.navigate('RentingFee', { carId: carId, based_price: based_price });
         } catch (error) {
             console.error('Error uploading caveat:', error);
+            Alert.alert('Error', 'An error occurred while uploading the images. Please try again.');
+            setLoading(false);
         }
     };
-
-
 
     return (
         <SafeAreaView style={{ flex: 1, backgroundColor: 'white' }}>
@@ -138,9 +138,13 @@ export default function AddCarRegistrationScreen({ navigation }) {
                 </View>
 
                 <View style={styles.action}>
-                    <TouchableOpacity onPress={handleUpload} disabled={form.images.filter(image => image.uri).length < 2}>
-                        <View style={[styles.btn, form.images.filter(image => image.uri).length < 2 && styles.btnDisabled]}>
-                            <Text style={styles.btnText}>Tiếp tục</Text>
+                    <TouchableOpacity onPress={handleUpload} disabled={loading || form.images.filter(image => image.uri).length < 2}>
+                        <View style={[styles.btn, (loading || form.images.filter(image => image.uri).length < 2) && styles.btnDisabled]}>
+                            {loading ? (
+                                <ActivityIndicator size="small" color="#fff" />
+                            ) : (
+                                <Text style={styles.btnText}>Tiếp tục</Text>
+                            )}
                         </View>
                     </TouchableOpacity>
                 </View>

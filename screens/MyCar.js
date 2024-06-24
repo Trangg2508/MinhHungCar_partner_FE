@@ -1,5 +1,5 @@
 import React, { useCallback, useContext, useEffect, useState } from 'react';
-import { View, Text, ScrollView, Image, TouchableOpacity, StyleSheet, FlatList } from 'react-native';
+import { View, Text, ScrollView, Image, TouchableOpacity, StyleSheet, FlatList, ActivityIndicator } from 'react-native';
 import { Tooltip } from '@rneui/themed';
 import axios from 'axios';
 import { AuthConText } from '../store/auth-context';
@@ -192,7 +192,7 @@ export default function MyCar({ navigation }) {
 
   const renderFooter = () => {
     if (!isLoading) return null;
-    return <LoadingOverlay message='' />;
+    return <ActivityIndicator message='' />;
   };
 
   return (

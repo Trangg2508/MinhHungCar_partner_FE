@@ -1,5 +1,5 @@
 import React, { useContext, useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Alert, SafeAreaView, Image } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Alert, SafeAreaView, Image, ActivityIndicator } from 'react-native';
 import Slider from '@react-native-community/slider';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Divider } from 'react-native-paper';
@@ -17,8 +17,10 @@ export default function RentingFeeScreen() {
 
     const [sliderValue, setSliderValue] = useState(based_price);
     const [isPriceUpdated, setIsPriceUpdated] = useState(false);
+    const [loading, setLoading] = useState(false);
 
     const handleUpdatePrice = async () => {
+        setLoading(true);
         try {
             const response = await axios.put(apiCar.updatePrice, {
                 car_id: carId,
@@ -34,6 +36,7 @@ export default function RentingFeeScreen() {
         } catch (error) {
             console.error('Error updating price:', error);
             Alert.alert('Error', 'Failed to update the price. Please try again.');
+            setLoading(false);
         }
     };
 
@@ -119,9 +122,13 @@ export default function RentingFeeScreen() {
                         <Text style={styles.priceRangeText}>Giá cao nhất</Text>
                     </View>
                     <View style={styles.action}>
-                        <TouchableOpacity onPress={handleUpdatePrice} disabled={isPriceUpdated}>
-                            <View style={[styles.btn, isPriceUpdated && { backgroundColor: '#ccc', borderColor: '#ccc' }]}>
-                                <Text style={styles.btnText}>Tiếp tục</Text>
+                        <TouchableOpacity onPress={handleUpdatePrice} disabled={loading || isPriceUpdated}>
+                            <View style={[styles.btn, (loading || isPriceUpdated) && styles.btnDisabled]}>
+                                {loading ? (
+                                    <ActivityIndicator size="small" color="white" />
+                                ) : (
+                                    <Text style={styles.btnText}>Tiếp tục</Text>
+                                )}
                             </View>
                         </TouchableOpacity>
                     </View>
@@ -275,5 +282,9 @@ const styles = StyleSheet.create({
         color: 'white',
         fontWeight: 'bold',
         fontSize: 16,
+    },
+    btnDisabled: {
+        backgroundColor: '#ccc',
+        borderColor: '#ccc',
     },
 });
