@@ -5,6 +5,7 @@ import axios from 'axios';
 import { AuthConText } from '../store/auth-context';
 import LoadingOverlay from '../components/UI/LoadingOverlay';
 import { useFocusEffect } from '@react-navigation/native';
+import Spinner from '../components/UI/Spinner';
 
 const ControlledTooltip = (props) => {
   const [open, setOpen] = useState(false);
@@ -19,23 +20,23 @@ const ControlledTooltip = (props) => {
 };
 
 const statusMessages = {
-  'pending_approval': 'Đăng kí xe thành công, vui lòng chờ MinhHungCar kiểm duyệt',
-  'approved': 'Xe đã được duyệt thành công. Bạn có thể tiến hành kí hợp đồng',
-  'rejected': 'Thông tin xe bị từ chối. Vui lòng kiểm tra và đăng kí lại',
-  'active': 'Xe đang được sử dụng bởi MinhHungCar',
-  'waiting_car_delivery': 'Chủ xe phải tới trung tâm để kiểm chứng giấy tờ',
+  pending_approval: 'Đăng kí xe thành công, vui lòng chờ MinhHungCar kiểm duyệt',
+  approved: 'Xe đã được duyệt thành công. Bạn có thể tiến hành kí hợp đồng',
+  rejected: 'Thông tin xe bị từ chối. Vui lòng kiểm tra và đăng kí lại',
+  active: 'Xe đang được sử dụng bởi MinhHungCar',
+  waiting_car_delivery: 'Chủ xe phải tới trung tâm để kiểm chứng giấy tờ',
   'pending_application:pending_car_images': 'Đang chờ hoàn thành thông tin ảnh xe',
   'pending_application:pending_car_caveat': 'Đang chờ hoàn thành thông tin giấy tờ xe',
   'pending_application:pending_price': 'Đang chờ hoàn thành thông tin giá cả',
 };
 
 const statusConvert = {
-  'no_filter': 'Tất cả',
-  'pending_approval': 'Chờ duyệt',
-  'approved': 'Đã duyệt',
-  'rejected': 'Đã từ chối',
-  'active': 'Đang hoạt động',
-  'waiting_car_delivery': 'Đợi giao xe',
+  no_filter: 'Tất cả',
+  pending_approval: 'Chờ duyệt',
+  approved: 'Đã duyệt',
+  rejected: 'Đã từ chối',
+  active: 'Đang hoạt động',
+  waiting_car_delivery: 'Đợi giao xe',
   'pending_application:pending_car_images': 'Chưa đăng kí hình ảnh',
   'pending_application:pending_car_caveat': 'Chưa đăng kí giấy tờ xe',
   'pending_application:pending_price': 'Chưa đăng kí thông tin giá cả',
@@ -53,7 +54,7 @@ export default function MyCar({ navigation }) {
 
   useEffect(() => {
     getRegisteredCar();
-  }, [activeTab, page, registeredCars]);
+  }, [activeTab, page]);
 
   useFocusEffect(
     useCallback(() => {
@@ -100,16 +101,12 @@ export default function MyCar({ navigation }) {
     }
   };
 
-
-
-
   const handleTabPress = (tabName) => {
     setActiveTab(tabName);
     setPage(1);
     setRegisteredCars([]);
     setHasMore(true);
   };
-
 
   const getStatusStyles = (status) => {
     switch (status) {
@@ -151,19 +148,19 @@ export default function MyCar({ navigation }) {
     <TouchableOpacity onPress={() => navigateToScreen(item)}>
       <View style={styles.card}>
         <View style={{ flexDirection: 'row' }}>
-          {item.status === 'pending_application:pending_car_images' ?
+          {item.status === 'pending_application:pending_car_images' ? (
             <Image
               resizeMode="cover"
               source={require('../assets/null_car.png')}
               style={styles.cardImg}
             />
-            :
+          ) : (
             <Image
               resizeMode="cover"
               source={{ uri: item.images[0] }}
               style={styles.cardImg}
             />
-          }
+          )}
           <View style={styles.cardBody}>
             <Text style={styles.cardTitle}>{`${item.car_model.brand} ${item.car_model.model}`}</Text>
             <Text style={styles.cardTag}>{`Biển số xe: ${item.license_plate.toUpperCase()}`}</Text>
@@ -193,13 +190,9 @@ export default function MyCar({ navigation }) {
     </TouchableOpacity>
   );
 
-
-
-
-
   const renderFooter = () => {
     if (!isLoading) return null;
-    return <LoadingOverlay message='' />;
+    return <Spinner message='' />;
   };
 
   return (
@@ -207,24 +200,21 @@ export default function MyCar({ navigation }) {
       <View>
 
         <View style={styles.tabContainer}>
-          <View style={styles.tabContainer}>
-            <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.scrollViewContent}>
-              {Object.keys(statusConvert).map((statusKey) => (
-                <TouchableOpacity
-                  key={statusKey}
-                  onPress={() => handleTabPress(statusKey)}
-                  style={[styles.tabItem, activeTab === statusKey && styles.activeTabItem]}
-                >
-                  <Text style={[styles.tabText, activeTab === statusKey && styles.activeTabText]}>
-                    {statusConvert[statusKey]}
-                  </Text>
-                </TouchableOpacity>
-              ))}
-            </ScrollView>
-          </View>
-
-
+          <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.scrollViewContent}>
+            {Object.keys(statusConvert).map((statusKey) => (
+              <TouchableOpacity
+                key={statusKey}
+                style={[styles.tabItem, activeTab === statusKey && styles.activeTabItem]}
+                onPress={() => handleTabPress(statusKey)}
+              >
+                <Text style={[styles.tabText, activeTab === statusKey && styles.activeTabText]}>
+                  {statusConvert[statusKey]}
+                </Text>
+              </TouchableOpacity>
+            ))}
+          </ScrollView>
         </View>
+
         <View style={styles.listContainer}>
           {registeredCars.length > 0 && (
             <>

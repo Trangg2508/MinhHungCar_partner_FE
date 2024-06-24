@@ -13,7 +13,7 @@ import {
 } from 'react-native';
 import { Divider } from 'react-native-paper';
 import Swiper from 'react-native-swiper';
-import FeatherIcon from 'react-native-vector-icons/Feather';
+// import FeatherIcon from 'react-native-vector-icons/Feather';
 import { AuthConText } from '../store/auth-context';
 import axios from 'axios';
 import LoadingOverlay from '../components/UI/LoadingOverlay';
@@ -106,10 +106,10 @@ export default function DetailScreen({ navigation }) {
                   onPress={() => {
                     // handle onPress
                   }}>
-                  <FeatherIcon
+                  {/* <FeatherIcon
                     color="#000"
                     name="arrow-left"
-                    size={24} />
+                    size={24} /> */}
                 </TouchableOpacity>
               </View>
 
@@ -120,10 +120,10 @@ export default function DetailScreen({ navigation }) {
                   onPress={() => {
                     // handle onPress
                   }}>
-                  <FeatherIcon
+                  {/* <FeatherIcon
                     color="#000"
                     name="more-vertical"
-                    size={24} />
+                    size={24} /> */}
                 </TouchableOpacity>
               </View>
             </View>
