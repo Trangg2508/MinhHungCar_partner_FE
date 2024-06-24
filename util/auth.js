@@ -33,7 +33,11 @@ export async function sendOtpToUser(email, password, first_name, last_name, phon
         });
         return response.status;
     } catch (error) {
-        Alert.alert('Lỗi', 'Không thể gửi OTP. Vui lòng thử lại!');
+        if (error.response?.status === 400) {
+            Alert.alert('Đăng kí thất bại', 'Tài khoản này đã có người đăng kí');
+        } else {
+            Alert.alert('Lỗi đăng kí', error.response?.data || 'Vui lòng thử lại');
+        }
     }
 }
 

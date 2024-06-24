@@ -12,7 +12,7 @@ import {
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import LoadingOverlay from '../components/UI/LoadingOverlay';
 import AuthContent from '../components/Auth/AuthContent';
-import { sendOtpToUser } from '../util/auth'; // Ensure this import is correct
+import { sendOtpToUser } from '../util/auth';
 
 export default function SignUpScreen() {
   const [isAuthenticating, setIsAuthenticating] = useState(false);
@@ -33,7 +33,7 @@ export default function SignUpScreen() {
         phone_number
       });
     } catch (error) {
-      if (error.response?.status === 409) {
+      if (error.response?.status === 400) {
         Alert.alert('Đăng kí thất bại', 'Tài khoản này đã có người đăng kí');
       } else {
         Alert.alert('Lỗi đăng kí', error.response?.data || 'Vui lòng thử lại');
