@@ -192,7 +192,7 @@ export default function MyCar({ navigation }) {
 
   const renderFooter = () => {
     if (!isLoading) return null;
-    return <Spinner message='' />;
+    return <LoadingOverlay message='' />;
   };
 
   return (
