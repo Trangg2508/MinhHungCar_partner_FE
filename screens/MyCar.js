@@ -4,7 +4,7 @@ import { Tooltip } from '@rneui/themed';
 import axios from 'axios';
 import { AuthConText } from '../store/auth-context';
 import LoadingOverlay from '../components/UI/LoadingOverlay';
-import { useFocusEffect } from '@react-navigation/native';
+import { useFocusEffect, useIsFocused } from '@react-navigation/native';
 import Spinner from '../components/UI/Spinner';
 
 const ControlledTooltip = (props) => {
@@ -50,20 +50,21 @@ export default function MyCar({ navigation }) {
   const [isLoading, setLoading] = useState(true);
   const [page, setPage] = useState(1); // State for pagination
 
-
+  const isFocused = useIsFocused();
   useEffect(() => {
     getRegisteredCar();
-  }, [activeTab, page]);
+  }, [activeTab, page, isFocused]);
 
-
-  const loadMoreItem = () => {
-
-    setPage(page => page + 1)
-  }
+  console.log(isFocused);
+  // const loadMoreItem = () => {
+  //   setPage(page => page + 1)
+  // }
 
   const getRegisteredCar = async () => {
+    // if(!isLoading){}
+    setLoading(true);
+
     try {
-      setLoading(true);
       let carStatus;
       if (activeTab === 'pending_application') {
         carStatus = [
@@ -76,7 +77,7 @@ export default function MyCar({ navigation }) {
       }
       console.log('PAGE: ', page);
       const response = await axios.get(
-        `https://minhhungcar.xyz/partner/cars?offset=${(page - 1) * 2}&limit=2&car_status=${carStatus.join(',')}`,
+        `https://minhhungcar.xyz/partner/cars?offset=${(page - 1) * 2}&limit=100&car_status=${carStatus.join(',')}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -84,17 +85,13 @@ export default function MyCar({ navigation }) {
         });
 
       const newCars = response.data.cars;
-      console.log(newCars);
       if (newCars.length > 0) {
-        console.log('zzozozozozo');
-        setRegisteredCars(cars => ([...cars, ...newCars]))
-        setLoading(false)
+        // setRegisteredCars(cars => ([...cars, ...newCars]))
+        setRegisteredCars(newCars)
       }
-
+      setLoading(false)
     } catch (error) {
       console.log('Error fetching data:', error);
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -102,6 +99,7 @@ export default function MyCar({ navigation }) {
     setActiveTab(tabName);
     setPage(1);
     setRegisteredCars([]);
+    setLoading(true)
   };
 
   const getStatusStyles = (status) => {
@@ -191,7 +189,7 @@ export default function MyCar({ navigation }) {
     return isLoading ?
       <View style={styles.loaderStyle}>
         <ActivityIndicator size="large" color="#aaa" />
-      </View> : null
+      </View> : <></>
   };
 
   return (
@@ -232,13 +230,14 @@ export default function MyCar({ navigation }) {
                   return item.id.toString()
                 }}
                 ListFooterComponent={renderFooter}
-                onEndReached={loadMoreItem}
-                onEndReachedThreshold={0}
+                // onEndReached={!isLoading && loadMoreItem}
+                // onEndReachedThreshold={0}
                 contentContainerStyle={styles.listContainer}
               />
             </>
           )}
-          {registeredCars.length === 0 && (
+
+          {registeredCars.length === 0 && !isLoading && (
             <View >
               <View style={{ justifyContent: 'center', alignItems: 'center', marginTop: 30 }}>
                 <Text style={{ fontSize: 16, color: '#686D76', marginBottom: 20 }}>Chưa có xe nào {statusConvert[activeTab]}</Text>
