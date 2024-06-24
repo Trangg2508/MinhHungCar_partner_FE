@@ -9,6 +9,7 @@ import {
   ScrollView,
   Image,
   Alert,
+  ActivityIndicator,
 } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
@@ -96,6 +97,32 @@ export default function ProfileScreen({ navigation }) {
 
   const submitForm = async () => {
     try {
+      // Validate phoneNum
+      if (!phoneNum || phoneNum.length !== 10 || !phoneNum.startsWith('0')) {
+        Alert.alert('Lỗi', 'Vui lòng nhập số điện thoại có 10 chữ số và bắt đầu bằng số 0.');
+        return;
+      }
+
+      // Validate IDCard
+      if (IDCard.length < 9 || IDCard.length > 11) {
+        Alert.alert('Lỗi', 'Số CCCD không hợp lệ. Vui lòng nhập số từ 9 đến 11 chữ số.');
+        return;
+      }
+
+      // Validate driveLicense
+      if (driveLicense.length !== 11) {
+        Alert.alert('Lỗi', 'Giấy phép lái xe không hợp lệ. Vui lòng nhập đúng 11 chữ số.');
+        return;
+      }
+
+      // Validate year
+      const currentYear = new Date().getFullYear();
+      const enteredYear = parseInt(year, 10);
+      if (isNaN(enteredYear) || enteredYear < 1900 || enteredYear > currentYear) {
+        Alert.alert('Lỗi', 'Năm sinh không hợp lệ');
+        return;
+      }
+
       // Combine day, month, and year into a formatted date
       const formattedDob = `${year}-${month}-${day}T00:00:00Z`;
 
@@ -124,13 +151,14 @@ export default function ProfileScreen({ navigation }) {
         getProfile();
       } else {
         console.log('Unexpected response status:', response.status);
-        Alert.alert('Error', 'Đã xảy ra lỗi khi cập nhật thông tin.');
+        Alert.alert('Lỗi', 'Đã xảy ra lỗi khi cập nhật thông tin.');
       }
     } catch (error) {
       console.log('Error updating profile:', error);
-      Alert.alert('Error', 'Đã xảy ra lỗi khi cập nhật thông tin.');
+      Alert.alert('Lỗi', 'Đã xảy ra lỗi khi cập nhật thông tin.');
     }
   };
+
 
   const uploadImage = async () => {
     const imageFormData = new FormData();
@@ -166,7 +194,7 @@ export default function ProfileScreen({ navigation }) {
       <ScrollView>
         {isLoading ? (
           <View style={styles.loadingContainer}>
-            <LoadingOverlay message='' />
+            <ActivityIndicator message='' />
           </View>
         ) : (
           <View style={styles.container}>

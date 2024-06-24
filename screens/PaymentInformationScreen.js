@@ -251,7 +251,7 @@ export default function PaymentInformationScreen({ navigation }) {
                 </View>
                 <View style={styles.QR}>
                   {imageLoading ? (
-                    <LoadingOverlay message='' />
+                    <ActivityIndicator message='' />
                   ) : image.selectedImage ? (
                     <Image key={image.selectedImage} style={styles.qrImage} source={{ uri: image.selectedImage }} />
                   ) : QRUrl ? (
