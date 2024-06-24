@@ -68,8 +68,8 @@ export default function AddCarRegistrationScreen({ navigation }) {
             console.log('Caveat uploaded:', response);
             navigation.navigate('RentingFee', { carId: carId, based_price: based_price });
         } catch (error) {
-            console.error('Error uploading caveat:', error);
-            Alert.alert('Error', 'An error occurred while uploading the images. Please try again.');
+            console.log('Error uploading caveat:', error);
+            Alert.alert('Lỗi', 'Có một vài lỗi xảy ra khi tải lên hình ảnh. Vui lòng thử lại');
             setLoading(false);
         }
     };

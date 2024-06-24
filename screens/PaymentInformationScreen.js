@@ -153,11 +153,11 @@ export default function PaymentInformationScreen({ navigation }) {
         setQRUrl(response.data.qr_code_url);
         console.log('Upload image successfully: ', response.data);
       } else {
-        console.error('Unexpected response status for image upload:', response.status);
+        console.log('Unexpected response status for image upload:', response.status);
         Alert.alert('Lỗi', 'Đã xảy ra lỗi khi tải lên hình ảnh.');
       }
     } catch (error) {
-      console.error('Upload image failed!', error);
+      console.log('Upload image failed!', error);
       Alert.alert('Lỗi', 'Đã xảy ra lỗi khi tải lên hình ảnh.');
     }
   };

@@ -7,7 +7,6 @@ import {
     TouchableOpacity,
     TextInput,
     ScrollView,
-    ActivityIndicator,
 } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import Input from './Input';
@@ -19,8 +18,6 @@ export default function AuthForm({ isLogin, onSubmit, credentialsInvalid }) {
     const [enteredFirstName, setEnteredFirstName] = useState('');
     const [enteredLastName, setEnteredLastName] = useState('');
     const [enteredPhoneNum, setEnteredPhoneNum] = useState('');
-
-    const [isSubmitting, setIsSubmitting] = useState(false);
 
     const {
         email: emailIsInvalid,
@@ -54,23 +51,15 @@ export default function AuthForm({ isLogin, onSubmit, credentialsInvalid }) {
         }
     }
 
-    async function submitHandler() {
-        setIsSubmitting(true);
-
-        try {
-            await onSubmit({
-                email: enteredEmail,
-                password: enteredPassword,
-                confirmPassword: enteredConfirmPassword,
-                last_name: enteredLastName,
-                first_name: enteredFirstName,
-                phone_number: enteredPhoneNum,
-            });
-        } catch (error) {
-            Alert.alert('Lỗi', 'Vui lòng thử lại.');
-        } finally {
-            setIsSubmitting(false);
-        }
+    function submitHandler() {
+        onSubmit({
+            email: enteredEmail,
+            password: enteredPassword,
+            confirmPassword: enteredConfirmPassword,
+            last_name: enteredLastName,
+            first_name: enteredFirstName,
+            phone_number: enteredPhoneNum
+        });
     }
 
     return (
@@ -180,18 +169,18 @@ export default function AuthForm({ isLogin, onSubmit, credentialsInvalid }) {
                             )}
 
 
+
                             <View style={styles.formAction}>
-                                <TouchableOpacity onPress={submitHandler} style={styles.btn}>
-                                    {isSubmitting ? (
-                                        <ActivityIndicator size="small" color="#fff" />
-                                    ) : (
-                                        <Text style={styles.btnText}>
-                                            {isLogin ? 'Đăng nhập' : 'Đăng kí'}
-                                        </Text>
-                                    )}
+                                <TouchableOpacity
+                                    onPress={submitHandler}>
+                                    <View style={styles.btn}>
+                                        {isLogin ?
+                                            <Text style={styles.btnText}>Đăng nhập</Text>
+                                            :
+                                            <Text style={styles.btnText}>Đăng kí</Text>}
+                                    </View>
                                 </TouchableOpacity>
                             </View>
-
                             {isLogin && (
                                 <>
                                     <Text style={styles.formActionSpacer}>hoặc tiếp tục với</Text>

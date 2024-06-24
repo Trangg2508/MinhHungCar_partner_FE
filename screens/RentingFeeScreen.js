@@ -34,7 +34,7 @@ export default function RentingFeeScreen() {
             setIsPriceUpdated(true); // Mark price as updated
             navigation.navigate('Success');
         } catch (error) {
-            console.error('Error updating price:', error);
+            console.log('Error updating price:', error);
             Alert.alert('Error', 'Failed to update the price. Please try again.');
             setLoading(false);
         }

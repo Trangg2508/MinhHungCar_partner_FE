@@ -3,6 +3,7 @@ import axios from 'axios';
 import { apiAccount } from '../api/apiConfig';
 // import axios from '../lib/axios'
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { Alert } from 'react-native';
 
 export async function getUser(email, password) {
     try {
@@ -16,8 +17,8 @@ export async function getUser(email, password) {
 
         return { token };
     } catch (error) {
-        console.error('Error getting user:', error);
-        throw error;
+        Alert.alert("Đăng nhập thất bại!", "Vui lòng kiểm tra lại!");
+
     }
 }
 
@@ -32,8 +33,7 @@ export async function sendOtpToUser(email, password, first_name, last_name, phon
         });
         return response.status;
     } catch (error) {
-        console.error('Error sending OTP to user:', error);
-        throw error;
+        Alert.alert('Lỗi', 'Không thể gửi OTP. Vui lòng thử lại!');
     }
 }
 
@@ -45,7 +45,6 @@ export async function verifyOtp(email, otp) {
         });
         return response.status;
     } catch (error) {
-        console.error('Error verifying OTP:', error);
-        throw error;
+        Alert.alert('OTP không hợp lệ', 'Vui lòng thử lại!');
     }
 }

@@ -26,7 +26,7 @@ export default function OTPScreen({ route }) {
             Alert.alert('Thành công', 'Tài khoản của bạn đã được xác minh thành công!');
             navigation.replace('Login');
         } catch (error) {
-            Alert.alert('OTP không hợp lệ', error.message || 'Mã OTP không đúng. Vui lòng thử lại!');
+            Alert.alert('OTP không hợp lệ', 'Mã OTP không đúng. Vui lòng thử lại!');
         } finally {
             setIsLoading(false);
         }

@@ -31,7 +31,7 @@ export default function SignInScreen({ navigation }) {
       // console.log('id: ', userID);
       authCtx.authenticate(token)
     } catch (error) {
-      Alert.alert("Đăng nhập thất bại!", "Không thể đăng nhập. Vui lòng kiểm tra lại!");
+
       setIsAuthenticating(false)
     }
   }

@@ -37,6 +37,7 @@ export default function AddCarInformationScreen({ navigation }) {
   const [fuelData, setFuelData] = useState([])
   const [motionData, setMotionData] = useState([])
   const [parkingLotData, setParkingLotData] = useState([])
+  const [parkingLotMetadata, setParkingLotMetadata] = useState([])
 
   const [isLoading, setLoading] = useState(true);
   const [isLoadButton, setLoadButton] = useState()
@@ -44,11 +45,12 @@ export default function AddCarInformationScreen({ navigation }) {
   const [id, setId] = useState('');
 
   useEffect(() => {
-    fetchBrandData();
+    fetchYearData();
     fetchPeriodData();
     fetchFuelData();
     fetchMotionData();
     fetchParkingLotData();
+    fetchParkingLotMetadata();
   }, []);
 
   useEffect(() => {
@@ -56,6 +58,8 @@ export default function AddCarInformationScreen({ navigation }) {
       getIDRegisteredCar();
     }
   }, [carList]);
+
+
 
   // Get periods data
   const fetchPeriodData = async () => {
@@ -66,10 +70,10 @@ export default function AddCarInformationScreen({ navigation }) {
         },
       });
       const periods = response.data.periods;
-      console.log('Fetch periods successfully: ', periods)
+      // console.log('Fetch periods successfully: ', periods)
       setPeriodData(periods);
     } catch (error) {
-      console.error('Error fetching periods:', error);
+      console.log('Error fetching periods:', error);
     }
   };
 
@@ -82,10 +86,10 @@ export default function AddCarInformationScreen({ navigation }) {
         },
       });
       const fuels = response.data.fuels;
-      console.log('Fetch fuels successfully: ', fuels)
+      // console.log('Fetch fuels successfully: ', fuels)
       setFuelData(fuels);
     } catch (error) {
-      console.error('Error fetching fuels:', error);
+      console.log('Error fetching fuels:', error);
     }
   };
 
@@ -98,10 +102,10 @@ export default function AddCarInformationScreen({ navigation }) {
         },
       });
       const motions = response.data.motions;
-      console.log('Fetch motions successfully: ', motions)
+      // console.log('Fetch motions successfully: ', motions)
       setMotionData(motions);
     } catch (error) {
-      console.error('Error fetching motions:', error);
+      console.log('Error fetching motions:', error);
     }
   };
 
@@ -114,17 +118,33 @@ export default function AddCarInformationScreen({ navigation }) {
         },
       });
       const parking_lot = response.data.parking_lot;
-      console.log('Fetch parking_lot successfully: ', parking_lot)
+      // console.log('Fetch parking_lot successfully: ', parking_lot)
       setParkingLotData(parking_lot);
       setLoading(false)
     } catch (error) {
-      console.error('Error fetching parking_lot:', error);
+      console.log('Error fetching parking_lot:', error);
     }
   };
 
+  // Get parking_lot metadata base on seat
+  const fetchParkingLotMetadata = async () => {
+    try {
+      const response = await axios.get(`https://minhhungcar.xyz/register_car_metadata/parking_lot?seat_type=${selectedSeat}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      const parking_lot = response.data;
+      // console.log('Fetch parking_lot successfully: ', parking_lot)
+      setParkingLotMetadata(parking_lot);
+      setLoading(false)
+    } catch (error) {
+      console.log('Error fetching parking_lot:', error);
+    }
+  };
 
-  // Get brand list
-  const fetchBrandData = async () => {
+  // Get year data
+  const fetchYearData = async () => {
     try {
       const response = await axios.get(apiCar.getCarMetadata, {
         headers: {
@@ -133,60 +153,105 @@ export default function AddCarInformationScreen({ navigation }) {
       });
       const carModels = response.data.models;
       setCarList(carModels);
-      const uniqueBrands = [...new Set(carModels.map((model) => model.brand))];
-      setBrands(uniqueBrands);
+      const uniqueYears = [...new Set(carModels.map((model) => model.year.toString()))];
+      setYears(uniqueYears);
     } catch (error) {
-      console.error('Error fetching brands:', error);
+      console.log('Error fetching years:', error);
     }
   };
 
-  const getRemainData = (brand) => {
-    const filteredModels = carList.filter((model) => model.brand === brand);
-    setModels(filteredModels.map((model) => model.model));
-    setYears([...new Set(filteredModels.map((model) => model.year.toString()))]);
-    setSeats([...new Set(filteredModels.map((model) => model.number_of_seats.toString()))]);
+
+  const getRemainData = (year) => {
+    // Get car arrays which have year = selected year
+    const filteredCars = carList.filter((model) => model.year.toString() === year);
+
+    // Get brands list of above car arrays
+    const uniqueBrands = [...new Set(filteredCars.map((model) => model.brand))];
+    setBrands(uniqueBrands);
+
+    // If selectedBrand is already set, filter models and seats
+    if (selectedBrand) {
+      const filteredModelsByBrand = filteredCars.filter((model) => model.brand === selectedBrand);
+      const uniqueModels = [...new Set(filteredModelsByBrand.map((model) => model.model))];
+      const uniqueSeats = [...new Set(filteredModelsByBrand.map((model) => model.number_of_seats.toString()))];
+      setModels(uniqueModels);
+      setSeats(uniqueSeats);
+    } else {
+      setModels([]);
+      setSeats([]);
+    }
+  };
+
+
+  const handleYearChange = (year) => {
+    setSelectedYear(year);
+    setSelectedBrand('');
+    setSelectedModel('');
+    setSelectedSeat('');
+    getRemainData(year);
   };
 
   const handleBrandChange = (brand) => {
     setSelectedBrand(brand);
     setSelectedModel('');
-    setSelectedYear('');
     setSelectedSeat('');
-    getRemainData(brand);
-  };
 
+    // Filter cars by selected year and brand
+    const filteredCars = carList.filter((m) => m.year.toString() === selectedYear && m.brand === brand);
+
+    // Extract unique models from filtered cars
+    const uniqueModels = [...new Set(filteredCars.map((m) => m.model))];
+    console.log('Filtered Models:', uniqueModels);
+
+    setModels(uniqueModels);
+  };
   const handleModelChange = (model) => {
     setSelectedModel(model);
-    setSelectedYear('');
     setSelectedSeat('');
-    const filteredModels = carList.filter((m) => m.brand === selectedBrand && m.model === model);
-    const uniqueYears = [...new Set(filteredModels.map((m) => m.year.toString()))];
-    setYears(uniqueYears);
+
+    // Filter cars by selected year, brand, and model
+    const filteredModels = carList.filter((m) =>
+      m.year.toString() === selectedYear &&
+      m.brand === selectedBrand &&
+      m.model === model
+    );
+
+    // Extract unique seats from filtered models
+    const uniqueSeats = [...new Set(filteredModels.map((m) => m.number_of_seats.toString()))];
+    console.log('Filtered Seats:', uniqueSeats);
+
+    setSeats(uniqueSeats);
+
+    if (uniqueSeats.length > 0) {
+      setSelectedSeat(uniqueSeats[0]);
+    }
+
+    updateCarModelIdAndBasePrice(model, selectedSeat);
   };
 
-  const handleYearChange = (year) => {
-    setSelectedYear(year);
-    setSelectedSeat('');
-    const filteredModels = carList.filter(
-      (m) => m.brand === selectedBrand && m.model === selectedModel && m.year.toString() === year
+  // Function to update carModelId and basePrice based on selected model and seat
+  const updateCarModelIdAndBasePrice = (model, seat) => {
+    const selectedCarModel = carList.find(
+      (m) =>
+        m.year.toString() === selectedYear &&
+        m.brand === selectedBrand &&
+        m.model === model &&
+        m.number_of_seats.toString() === seat
     );
-    setSeats(filteredModels.map((m) => m.number_of_seats.toString()));
+
+    if (selectedCarModel) {
+      console.log('selectedCarModel.id:', selectedCarModel.id);
+      setCarModelId(selectedCarModel.id);
+      setBasePrice(selectedCarModel.base_price);
+    }
   };
 
   const handleSeatChange = (seat) => {
     setSelectedSeat(seat);
-    const selectedCarModel = carList.find(
-      (model) =>
-        model.brand === selectedBrand &&
-        model.model === selectedModel &&
-        model.year.toString() === selectedYear &&
-        model.number_of_seats.toString() === seat
-    );
-    if (selectedCarModel) {
-      setCarModelId(selectedCarModel.id);
-      setBasePrice(selectedCarModel.based_price);
-    }
+    updateCarModelIdAndBasePrice(selectedModel, seat);
   };
+
+
 
   // Get ID of the newest car
   const getNewestCarId = (cars) => {
@@ -213,10 +278,10 @@ export default function AddCarInformationScreen({ navigation }) {
         setId(newestCarId);
         console.log('ID of the newest car:', newestCarId);
       } else {
-        console.warn('No cars available to get the ID from.');
+        console.log('No cars available to get the ID from.');
       }
     } catch (error) {
-      console.error('Error fetching id:', error);
+      console.log('Error fetching id:', error);
     }
   };
 
@@ -235,17 +300,30 @@ export default function AddCarInformationScreen({ navigation }) {
       !selectedYear ||
       !selectedSeat
     ) {
+
+      // Continue with your submit logic here
+      console.log('Submitting form with:');
+      console.log('License Plate:', licensePlate);
+      console.log('Car Model ID:', carModelId);
+      console.log('Selected Motion Code:', selectedMotionCode);
+      console.log('Selected Fuel Code:', selectedFuelCode);
+      console.log('Selected Parking:', selectedParking);
+      console.log('Selected Period Code:', selectedPeriodCode);
+      console.log('Description:', description);
+      console.log('Selected Brand:', selectedBrand);
+      console.log('Selected Model:', selectedModel);
+      console.log('Selected Year:', selectedYear);
+      console.log('Selected Seat:', selectedSeat);
+
       Alert.alert('Lỗi', 'Vui lòng điền đầy đủ tất cả thông tin');
       return;
     }
 
     // Check if the license plate length is valid
-    if (licensePlate.trim().length < 4) {
-      Alert.alert('Lỗi', 'Biển số xe phải có ít nhất 4 kí tự');
+    if (licensePlate.trim().length !== 9) {
+      Alert.alert('Lỗi', 'Biển số xe có 9 kí tự');
       return;
     }
-
-
 
 
     try {
@@ -274,7 +352,8 @@ export default function AddCarInformationScreen({ navigation }) {
 
       navigation.navigate('AddCarPhoto', { carId: incrementedId, based_price: basePrice });
     } catch (error) {
-      console.error('Error creating car:', error);
+      Alert.alert('Lỗi', 'Thêm xe thất bại. Vui lòng thử lại!')
+      console.log('Error creating car:', error);
     } finally {
       setLoadButton(false);
     }
@@ -347,7 +426,31 @@ export default function AddCarInformationScreen({ navigation }) {
                   style={styles.inputControl}
                   value={licensePlate.toString()}
                 />
+              </View>
 
+              <View style={styles.input}>
+                <Text style={styles.inputLabel}>
+                  Năm sản xuất
+                  <Text style={styles.required}>{' '}*</Text>
+                </Text>
+
+                <RNPickerSelect
+                  onValueChange={(year) => handleYearChange(year)}
+                  placeholder={{
+                    label: "Chọn năm sản xuất",
+                    value: null,
+                    color: '#9EA0A4',
+                  }}
+                  items={years.map((year, index) => ({
+                    key: index.toString(),
+                    label: year,
+                    value: year,
+                  }))}
+                  style={pickerSelectStyles}
+                  Icon={() => {
+                    return <Image source={require('../assets/chevron_down.png')} style={styles.icon} />
+                  }}
+                />
               </View>
 
               <View style={styles.input}>
@@ -382,6 +485,7 @@ export default function AddCarInformationScreen({ navigation }) {
 
                 <RNPickerSelect
                   onValueChange={(model) => handleModelChange(model)}
+
                   placeholder={{
                     label: "Chọn mẫu xe",
                     value: null,
@@ -393,62 +497,40 @@ export default function AddCarInformationScreen({ navigation }) {
                     value: model,
                   }))}
                   style={pickerSelectStyles}
-                  disabled={!selectedBrand}
                   Icon={() => {
                     return <Image source={require('../assets/chevron_down.png')} style={styles.icon} />
                   }}
                 />
               </View>
 
-              <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-                <View style={styles.inputShort}>
-                  <Text style={styles.inputLabel}>Năm sản xuất
-                    <Text style={styles.required}>{' '}*</Text>
-                  </Text>
+              <View style={styles.input}>
+                <Text style={styles.inputLabel}>
+                  Số ghế
+                  <Text style={styles.required}>{' '}*</Text>
+                </Text>
 
-                  <RNPickerSelect
-                    onValueChange={(year) => handleYearChange(year)}
-                    placeholder={{
-                      label: "Năm sản xuất",
-                      value: null,
-                      color: '#9EA0A4',
-                    }}
-                    items={years.map((year, index) => ({
-                      key: index.toString(),
-                      label: year,
-                      value: year,
-                    }))}
-                    style={pickerSelectShortStyles}
-                    Icon={() => {
-                      return <Image source={require('../assets/chevron_down.png')} style={styles.icon} />
-                    }}
-                  />
-                </View>
+                <RNPickerSelect
+                  onValueChange={(seat) => handleSeatChange(seat)}
+                  placeholder={{
+                    label: 'Chọn số ghế',
+                    value: null,
+                    color: 'black',
+                  }}
+                  value={selectedSeat}
+                  items={seats.map((seat, index) => ({
+                    key: index.toString(),
+                    label: seat,
+                    value: seat,
+                  }))}
+                  style={pickerSelectStyles}
+                  Icon={() => {
+                    return <Image source={require('../assets/chevron_down.png')} style={styles.icon} />
+                  }}
+                />
 
-                <View style={styles.inputShort}>
-                  <Text style={styles.inputLabel}>Số ghế
-                    <Text style={styles.required}>{' '}*</Text>
-                  </Text>
-                  <RNPickerSelect
-                    onValueChange={(seat) => handleSeatChange(seat)}
-                    placeholder={{
-                      label: "Chọn số ghế",
-                      value: null,
-                      color: '#9EA0A4',
-                    }}
-                    items={seats.map((seat, index) => ({
-                      key: index.toString(),
-                      label: `${seat} chỗ`,
-                      value: seat,
-                    }))}
-                    style={pickerSelectShortStyles}
-                    Icon={() => {
-                      return <Image source={require('../assets/chevron_down.png')} style={styles.icon} />
-                    }}
-                  />
 
-                </View>
               </View>
+
               <View style={styles.input}>
                 <Text style={styles.inputLabel}>Truyền động
                   <Text style={styles.required}>{' '}*</Text>
@@ -512,23 +594,45 @@ export default function AddCarInformationScreen({ navigation }) {
 
                 <View style={{ flexDirection: 'row' }}>
                   <View style={styles.radioButtonGroup}>
-                    {parkingLotData.map((lot) => (
-                      <TouchableOpacity
-                        key={lot.code}
-                        onPress={() => setSelectedParking(lot.code)}
-                        style={[
-                          styles.radioButton,
-                          selectedParking === lot.code && styles.radioButtonSelected,
-                        ]}
-                      >
-                        <View style={styles.radioCircle}>
-                          {selectedParking === lot.code && (
-                            <View style={styles.selectedRb} />
-                          )}
-                        </View>
-                        <Text style={styles.radioText}>{lot.text}</Text>
-                      </TouchableOpacity>
-                    ))}
+                    {!selectedSeat ? (
+                      parkingLotData.map((lot) => (
+                        <TouchableOpacity
+                          key={lot.code}
+                          onPress={() => setSelectedParking(lot.code)}
+                          style={[
+                            styles.radioButton,
+                            selectedParking === lot.code && styles.radioButtonSelected,
+                          ]}
+                        >
+                          <View style={styles.radioCircle}>
+                            {selectedParking === lot.code && (
+                              <View style={styles.selectedRb} />
+                            )}
+                          </View>
+                          <Text style={styles.radioText}>{lot.text}</Text>
+                        </TouchableOpacity>
+                      ))
+                    ) : (
+                      parkingLotMetadata.map((lot) => (
+                        <TouchableOpacity
+                          key={lot.code}
+                          onPress={() => setSelectedParking(lot.code)}
+                          style={[
+                            styles.radioButton,
+                            selectedParking === lot.code && styles.radioButtonSelected,
+                          ]}
+                        >
+                          <View style={styles.radioCircle}>
+                            {selectedParking === lot.code && (
+                              <View style={styles.selectedRb} />
+                            )}
+                          </View>
+                          <Text style={styles.radioText}>{lot.text}</Text>
+                        </TouchableOpacity>
+                      ))
+                    )}
+
+
                   </View>
                 </View>
               </View>
@@ -802,7 +906,7 @@ const pickerSelectStyles = StyleSheet.create({
     borderColor: '#B2B2B2',
     borderRadius: 12,
     borderWidth: 0.5,
-    width: 335,
+    width: '100%',
     height: 44,
     marginBottom: 12,
     color: '#222',

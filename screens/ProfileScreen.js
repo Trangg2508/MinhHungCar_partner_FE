@@ -69,7 +69,7 @@ export default function ProfileScreen({ navigation }) {
       console.log('Fetch profile successfully ', response.data);
       setLoading(false);
     } catch (error) {
-      console.error('Error fetching data:', error);
+      console.log('Error fetching data:', error);
     }
   };
 
@@ -123,11 +123,11 @@ export default function ProfileScreen({ navigation }) {
         Alert.alert('Thành công', 'Bạn đã cập nhật thông tin thành công!');
         getProfile();
       } else {
-        console.error('Unexpected response status:', response.status);
+        console.log('Unexpected response status:', response.status);
         Alert.alert('Error', 'Đã xảy ra lỗi khi cập nhật thông tin.');
       }
     } catch (error) {
-      console.error('Error updating profile:', error);
+      console.log('Error updating profile:', error);
       Alert.alert('Error', 'Đã xảy ra lỗi khi cập nhật thông tin.');
     }
   };
@@ -150,11 +150,11 @@ export default function ProfileScreen({ navigation }) {
         setAvatarURL(response.data.url);
         console.log('Upload image successfully: ', response.data);
       } else {
-        console.error('Unexpected response status for image upload:', response.status);
+        console.log('Unexpected response status for image upload:', response.status);
         Alert.alert('Lỗi', 'Đã xảy ra lỗi khi tải lên hình ảnh.');
       }
     } catch (error) {
-      console.error('Upload image failed!', error);
+      console.log('Upload image failed!', error);
       Alert.alert('Lỗi', 'Đã xảy ra lỗi khi tải lên hình ảnh.');
     }
   };

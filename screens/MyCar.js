@@ -95,7 +95,7 @@ export default function MyCar({ navigation }) {
         setHasMore(false); // No more data to load
       }
     } catch (error) {
-      console.error('Error fetching data:', error);
+      console.log('Error fetching data:', error);
     } finally {
       setLoading(false);
     }

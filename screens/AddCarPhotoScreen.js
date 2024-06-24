@@ -92,13 +92,12 @@ export default function AddCarPhotoScreen({ navigation }) {
             console.log('Images uploaded:', response.data);
             navigation.navigate('AddRegist', { carId: carId, based_price: based_price });
         } catch (error) {
-            console.error('Error uploading images:', error);
+            console.log('Error uploading images:', error);
             if (error.response) {
-                console.error('Server Response:', error.response.data);
+                console.log('Server Response:', error.response.data);
             }
             if (error.response && error.response.status === 401) {
-                console.error('Unauthorized request. Token may be expired.');
-                // Handle token refresh or re-authentication here
+                console.log('Unauthorized request. Token may be expired.');
             } else {
                 Alert.alert('Lỗi', 'Có một vài lỗi xảy ra khi tải lên hình ảnh. Vui lòng thử lại');
             }

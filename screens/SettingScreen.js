@@ -36,7 +36,7 @@ export default function SettingScreen({ navigation }) {
     try {
       authCtx.logout();
     } catch (error) {
-      console.error('Error clearing AsyncStorage:', error);
+      console.log('Error clearing AsyncStorage:', error);
     }
   };
 
