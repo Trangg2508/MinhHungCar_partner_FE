@@ -49,18 +49,17 @@ export default function MyCar({ navigation }) {
   const [activeTab, setActiveTab] = useState('no_filter');
   const [isLoading, setLoading] = useState(true);
   const [page, setPage] = useState(1); // State for pagination
-  const [hasMore, setHasMore] = useState(true); // State to indicate if there's more data to load
 
 
   useEffect(() => {
     getRegisteredCar();
   }, [activeTab, page]);
 
-  useFocusEffect(
-    useCallback(() => {
-      getRegisteredCar();
-    }, [])
-  );
+
+  const loadMoreItem = () => {
+
+    setPage(page => page + 1)
+  }
 
   const getRegisteredCar = async () => {
     try {
@@ -75,27 +74,25 @@ export default function MyCar({ navigation }) {
       } else {
         carStatus = [activeTab];
       }
+      console.log('PAGE: ', page);
+      const response = await axios.get(
+        `https://minhhungcar.xyz/partner/cars?offset=${(page - 1) * 2}&limit=2&car_status=${carStatus.join(',')}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
 
-      const response = await axios.get(`https://minhhungcar.xyz/partner/cars`, {
-        params: {
-          offset: (page - 1) * 10,
-          limit: 10,
-          car_status: carStatus.join(','),
-        },
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      const newCars = response.data.cars || [];
+      const newCars = response.data.cars;
+      console.log(newCars);
       if (newCars.length > 0) {
-        setRegisteredCars(page === 1 ? newCars : [...registeredCars, ...newCars]);
-        setPage(page + 1);
-      } else {
-        setHasMore(false); // No more data to load
+        console.log('zzozozozozo');
+        setRegisteredCars(cars => ([...cars, ...newCars]))
+        setLoading(false)
       }
+
     } catch (error) {
-      console.log('Error fetching data:', error);
+      console.error('Error fetching data:', error);
     } finally {
       setLoading(false);
     }
@@ -105,7 +102,6 @@ export default function MyCar({ navigation }) {
     setActiveTab(tabName);
     setPage(1);
     setRegisteredCars([]);
-    setHasMore(true);
   };
 
   const getStatusStyles = (status) => {
@@ -191,8 +187,11 @@ export default function MyCar({ navigation }) {
   );
 
   const renderFooter = () => {
-    if (!isLoading) return null;
-    return <ActivityIndicator message='' />;
+
+    return isLoading ?
+      <View style={styles.loaderStyle}>
+        <ActivityIndicator size="large" color="#aaa" />
+      </View> : null
   };
 
   return (
@@ -229,10 +228,12 @@ export default function MyCar({ navigation }) {
               <FlatList
                 data={registeredCars}
                 renderItem={renderItem}
-                keyExtractor={(item) => item.id.toString()}
+                keyExtractor={(item) => {
+                  return item.id.toString()
+                }}
                 ListFooterComponent={renderFooter}
-                onEndReachedThreshold={0.1}
-                onEndReached={getRegisteredCar}
+                onEndReached={loadMoreItem}
+                onEndReachedThreshold={0}
                 contentContainerStyle={styles.listContainer}
               />
             </>
