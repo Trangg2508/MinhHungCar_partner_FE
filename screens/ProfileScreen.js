@@ -110,8 +110,8 @@ export default function ProfileScreen({ navigation }) {
       }
 
       // Validate driveLicense
-      if (driveLicense.length !== 11) {
-        Alert.alert('Lỗi', 'Giấy phép lái xe không hợp lệ. Vui lòng nhập đúng 11 chữ số.');
+      if (driveLicense.length !== 12) {
+        Alert.alert('Lỗi', 'Giấy phép lái xe không hợp lệ. Vui lòng nhập đúng 12 chữ số.');
         return;
       }
 
