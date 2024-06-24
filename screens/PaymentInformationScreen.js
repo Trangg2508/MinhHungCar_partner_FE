@@ -175,6 +175,10 @@ export default function PaymentInformationScreen({ navigation }) {
     }
   };
 
+  // Calculate maximum width for picker based on longest bank name
+  const longestBankName = banks.reduce((max, bank) => (bank.length > max ? bank.length : max), 0);
+  const pickerWidth = longestBankName * 10;
+
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: '#fff' }}>
       {isLoading && <LoadingOverlay message='' />}
@@ -230,7 +234,10 @@ export default function PaymentInformationScreen({ navigation }) {
                     label: bank,
                     value: bank,
                   }))}
-                  style={pickerSelectStyles}
+                  style={{
+                    ...pickerSelectStyles,
+                    width: pickerWidth,
+                  }}
                   Icon={() => {
                     return <Image source={require('../assets/chevron_down.png')} style={styles.icon} />
                   }}
@@ -372,10 +379,10 @@ const styles = StyleSheet.create({
     color: '#fff',
   },
   icon: {
-    marginRight: 24,
+    marginRight: 10,
     marginVertical: 18,
     width: 20,
-    height: 10
+    height: 10,
   },
   uploadContainer: {
     width: 100,
@@ -401,10 +408,11 @@ const pickerSelectStyles = StyleSheet.create({
     borderColor: '#B2B2B2',
     borderRadius: 12,
     borderWidth: 0.5,
-    width: 340,
+    width: '100%',
     height: 44,
     marginBottom: 12,
     color: '#222',
+    paddingRight: 24
   },
   inputAndroid: {
     fontSize: 15,
