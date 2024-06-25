@@ -25,7 +25,7 @@ export default function SignUpScreen() {
 
     try {
       await sendOtpToUser(email, password, last_name, first_name, phone_number);
-      navigation.navigate('OTP', {
+      navigation.navigate('Register', {
         email,
         password,
         last_name,
