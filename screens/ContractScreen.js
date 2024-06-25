@@ -59,7 +59,7 @@ export default function ContractScreen({ navigation }) {
       console.log('Sign contract successfully!');
       Alert.alert(
         'Chúc mừng',
-        'Bạn đã kí hợp đồng thành công! Vui lòng đợi phản hồi từ MinhHungCar',
+        'Bạn đã ký hợp đồng thành công! Vui lòng đợi phản hồi từ MinhHungCar',
         [
           {
             text: 'OK',
@@ -69,7 +69,7 @@ export default function ContractScreen({ navigation }) {
       );
     } catch (error) {
       console.log('Sign contract error: ', error);
-      Alert.alert('Error', 'Failed to sign the contract. Please try again.');
+      Alert.alert('Lỗi', 'Không thể ký hợp đồng. Vui lòng thử lại!');
     }
   };
 
@@ -102,7 +102,7 @@ export default function ContractScreen({ navigation }) {
                 onPress={handleSignContract}
                 disabled={!isChecked}
               >
-                <Text style={styles.buttonText}>Kí hợp đồng</Text>
+                <Text style={styles.buttonText}>Ký hợp đồng</Text>
               </TouchableOpacity>
             </>
           }
