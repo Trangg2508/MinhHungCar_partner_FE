@@ -252,15 +252,12 @@ export default function AddCarInformationScreen({ navigation }) {
   const validateLicensePlate = (licensePlate) => {
     licensePlate = licensePlate.trim();
 
-    const pattern = /^[a-zA-Z0-9]+$/;
+    const pattern = /^(?:\d{2}[a-zA-Z]\d{4}|\d{2}[a-zA-Z]\d{5})$/;
 
-    if (licensePlate.length !== 9) {
-      Alert.alert('Lỗi', 'Biển số xe cần có đúng 9 kí tự');
-      return false;
-    }
+
 
     if (!pattern.test(licensePlate)) {
-      Alert.alert('Lỗi', 'Biển số xe chỉ được chứa chữ cái và số');
+      Alert.alert('Lỗi', 'Sai cú pháp biển số xe. Vui lòng nhập lại!');
       return false;
     }
 
