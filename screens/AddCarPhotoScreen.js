@@ -54,7 +54,7 @@ export default function AddCarPhotoScreen({ navigation }) {
 
     const handleUpload = async () => {
         if (!mainImages.selectedImage || smallImages.some(image => image === null)) {
-            Alert.alert('Error', 'Please select all images.');
+            Alert.alert('Lỗi', 'Vui lòng chọn tất cả các hình ảnh.');
             return;
         }
 
