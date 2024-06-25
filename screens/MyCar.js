@@ -3,15 +3,14 @@ import { View, Text, ScrollView, Image, TouchableOpacity, StyleSheet, FlatList, 
 import { Tooltip } from '@rneui/themed';
 import axios from 'axios';
 import { AuthConText } from '../store/auth-context';
-import LoadingOverlay from '../components/UI/LoadingOverlay';
 import { useFocusEffect, useIsFocused } from '@react-navigation/native';
-import Spinner from '../components/UI/Spinner';
 
 const ControlledTooltip = (props) => {
   const [open, setOpen] = useState(false);
   return (
     <Tooltip
       visible={open}
+      contentStyle={styles.tooltipContent}
       onOpen={() => setOpen(true)}
       onClose={() => setOpen(false)}
       {...props}
@@ -165,7 +164,7 @@ export default function MyCar({ navigation }) {
                 </Text>
               </View>
               <ControlledTooltip
-                popover={<Text style={{ color: 'white' }}>{statusMessages[item.status]}</Text>}
+                popover={<Text style={styles.tooltipText}>{statusMessages[item.status]}</Text>}
                 containerStyle={styles.tooltipContainer}
                 backgroundColor='#B4B1B1'
                 height={60}
@@ -352,9 +351,17 @@ const styles = StyleSheet.create({
     color: 'white',
   },
   tooltipContainer: {
-    width: 400,
-    padding: 5,
+    height: 'auto',
   },
+  tooltipContent: {
+    width: '100%',
+    height: '100%'
+  },
+  tooltipText: {
+    color: 'white',
+    flexWrap: 'wrap',
+  },
+
   //Tab
   tabContainer: {
     height: 60,
