@@ -54,12 +54,11 @@ export default function AddCarInformationScreen({ navigation }) {
   }, []);
 
   useEffect(() => {
-    if (carList.length > 0) {
-      getIDRegisteredCar();
+    if (id && basePrice) {
+      navigation.navigate('AddCarPhoto', { carId: id, based_price: basePrice });
     }
-  }, [carList]);
+  }, [id, basePrice]);
 
-  // Get periods data
   const fetchPeriodData = async () => {
     try {
       const response = await axios.get(apiCar.getCarMetadata, {
@@ -71,10 +70,10 @@ export default function AddCarInformationScreen({ navigation }) {
       setPeriodData(periods);
     } catch (error) {
       console.log('Error fetching periods:', error);
+      setPeriodData([]); // Set an empty array or default value
     }
   };
 
-  // Get fuels data
   const fetchFuelData = async () => {
     try {
       const response = await axios.get(apiCar.getCarMetadata, {
@@ -89,7 +88,6 @@ export default function AddCarInformationScreen({ navigation }) {
     }
   };
 
-  // Get motions data
   const fetchMotionData = async () => {
     try {
       const response = await axios.get(apiCar.getCarMetadata, {
@@ -104,7 +102,6 @@ export default function AddCarInformationScreen({ navigation }) {
     }
   };
 
-  // Get parking_lot data
   const fetchParkingLotData = async () => {
     try {
       const response = await axios.get(apiCar.getCarMetadata, {
@@ -120,7 +117,6 @@ export default function AddCarInformationScreen({ navigation }) {
     }
   };
 
-  // Get parking_lot metadata base on seat
   const fetchParkingLotMetadata = async () => {
     if (selectedSeat) {
       try {
@@ -140,7 +136,6 @@ export default function AddCarInformationScreen({ navigation }) {
     }
   };
 
-  // Get year data
   const fetchYearData = async () => {
     try {
       const response = await axios.get(apiCar.getCarMetadata, {
@@ -211,7 +206,6 @@ export default function AddCarInformationScreen({ navigation }) {
     setParkingLotMetadata([]);
   };
 
-
   const handleModelChange = (model) => {
     setSelectedModel(model);
     setSelectedSeat('');
@@ -234,7 +228,6 @@ export default function AddCarInformationScreen({ navigation }) {
     getCarModelIdAndBasePrice(model, selectedSeat);
   };
 
-
   const getCarModelIdAndBasePrice = (model, seat) => {
     const selectedCarModel = carList.find(
       (m) =>
@@ -254,31 +247,6 @@ export default function AddCarInformationScreen({ navigation }) {
     setSelectedSeat(seat);
     getCarModelIdAndBasePrice(selectedModel, seat);
     fetchParkingLotMetadata();
-  };
-
-  const getNewestCarId = (cars) => {
-    if (!cars || cars.length === 0) {
-      return null;
-    }
-    const sortedCars = cars.sort((a, b) => new Date(b.car_model.created_at) - new Date(a.car_model.created_at));
-    const newestCarId = sortedCars[0]?.id;
-    return newestCarId;
-  };
-
-  const getIDRegisteredCar = async () => {
-    try {
-      const response = await axios.get(apiCar.getAllCar, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      const newestCarId = getNewestCarId(response.data.cars);
-      if (newestCarId) {
-        setId(newestCarId);
-      }
-    } catch (error) {
-      console.log('Error fetching id:', error);
-    }
   };
 
   const validateLicensePlate = (licensePlate) => {
@@ -341,12 +309,11 @@ export default function AddCarInformationScreen({ navigation }) {
           },
         }
       );
-      await getIDRegisteredCar();
-      const incrementedId = id + 1;
 
-      navigation.navigate('AddCarPhoto', { carId: incrementedId, based_price: basePrice });
+      setId(response.data.car.id);
+      setBasePrice(response.data.car.car_model.based_price);
     } catch (error) {
-      Alert.alert('Lỗi', 'Thêm xe thất bại. Vui lòng thử lại!')
+      Alert.alert('Lỗi', 'Thêm xe thất bại. Vui lòng thử lại!');
     } finally {
       setLoadButton(false);
     }
@@ -633,14 +600,14 @@ export default function AddCarInformationScreen({ navigation }) {
               </View>
 
               <View style={styles.input}>
-                <Text style={styles.inputLabel}>Kì hạn thuê xe
+                <Text style={styles.inputLabel}>Kỳ hạn cho thuê xe
                   <Text style={styles.required}>{' '}*</Text>
                 </Text>
 
                 <RNPickerSelect
                   onValueChange={(period) => setSelectedPeriodCode(period)}
                   placeholder={{
-                    label: "Chọn kì hạn",
+                    label: "Chọn kỳ hạn",
                     value: null,
                     color: '#9EA0A4',
                   }}
