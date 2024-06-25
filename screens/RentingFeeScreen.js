@@ -93,8 +93,12 @@ export default function RentingFeeScreen() {
                         <Divider style={{ height: 1, backgroundColor: '#773BFF', width: 180, marginTop: 5 }} />
                     </View>
                     <View style={styles.priceRange}>
-                        <Text style={styles.priceRangeText}>{(based_price - 500000).toLocaleString()} VND</Text>
-                        <Text style={styles.priceRangeText}>{(based_price + 500000).toLocaleString()} VND</Text>
+                        <Text style={styles.priceRangeText}>
+                            {Math.max(based_price - 200000, 200000).toLocaleString()} VND
+                        </Text>
+                        <Text style={styles.priceRangeText}>
+                            {(based_price + 200000).toLocaleString()} VND
+                        </Text>
                     </View>
                     <View style={styles.sliderContainer}>
                         <LinearGradient
@@ -105,8 +109,8 @@ export default function RentingFeeScreen() {
                         />
                         <Slider
                             style={styles.slider}
-                            minimumValue={based_price - 500000}
-                            maximumValue={based_price + 500000}
+                            minimumValue={Math.max(based_price - 200000, 200000)}  // Ensure minimum value is at least 200,000 VND
+                            maximumValue={based_price + 200000}
                             step={1000}
                             value={sliderValue}
                             onValueChange={(value) => setSliderValue(value)}

@@ -21,49 +21,49 @@ const ChatScreen = () => {
     {
       id: 1,
       sent: true,
-      msg: 'Lorem ipsum dolor',
+      msg: 'Xin chào! Tôi có thể giúp gì cho anh/chị?',
       image: 'https://www.bootdey.com/img/Content/avatar/avatar1.png',
     },
     {
       id: 2,
       sent: true,
-      msg: 'sit amet, consectetuer',
+      msg: 'Bạn có quan tâm đến sản phẩm nào không?',
       image: 'https://www.bootdey.com/img/Content/avatar/avatar1.png',
     },
     {
       id: 3,
       sent: false,
-      msg: 'adipiscing elit. Aenean ',
+      msg: 'Xin chào! Tôi muốn hỏi thông tin về sản phẩm này.',
       image: 'https://www.bootdey.com/img/Content/avatar/avatar6.png',
     },
     {
       id: 4,
       sent: true,
-      msg: 'commodo ligula eget dolor.',
+      msg: 'Sản phẩm này có sẵn và đảm bảo chất lượng.',
       image: 'https://www.bootdey.com/img/Content/avatar/avatar1.png',
     },
     {
       id: 5,
       sent: false,
-      msg: 'Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes',
+      msg: 'Tôi muốn biết thêm về chi tiết kỹ thuật của sản phẩm.',
       image: 'https://www.bootdey.com/img/Content/avatar/avatar6.png',
     },
     {
       id: 6,
       sent: true,
-      msg: 'nascetur ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu, pretium quis, sem. Nulla consequat massa quis enim. Donec pede justo, fringilla vel, aliquet nec, vulputate eget, arcu. In enim justo',
+      msg: 'Sản phẩm này có thể đáp ứng các nhu cầu của bạn.',
       image: 'https://www.bootdey.com/img/Content/avatar/avatar1.png',
     },
     {
       id: 7,
       sent: false,
-      msg: 'rhoncus ut, imperdiet',
+      msg: 'Tôi cần thêm thông tin về chính sách bảo hành.',
       image: 'https://www.bootdey.com/img/Content/avatar/avatar6.png',
     },
     {
       id: 8,
       sent: false,
-      msg: 'a, venenatis vitae',
+      msg: 'Sản phẩm này có giao hàng miễn phí không?',
       image: 'https://www.bootdey.com/img/Content/avatar/avatar6.png',
     },
   ];
@@ -136,7 +136,7 @@ const ChatScreen = () => {
         data={messages}
         keyExtractor={(item) => item.id.toString()}
         renderItem={renderItem}
-        // inverted 
+      // inverted 
       />
       <View style={styles.inputContainer}>
         <TextInput
@@ -213,7 +213,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     backgroundColor: '#6897FF',
     padding: 10,
-    marginLeft: 0, 
+    marginLeft: 0,
   },
   sentMsgTxt: {
     fontSize: 15,
