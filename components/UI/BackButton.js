@@ -12,7 +12,7 @@ export default function BackButton({ title, subTitle, callBack }) {
                     ,
                     [
                         { text: "Ở lại", onPress: () => { } },
-                        { text: "Hủy", style: "destructive", onPress: callBack }
+                        { text: "Trở về", style: "destructive", onPress: callBack }
                     ]
                 )
             }} style={{ color: "blue" }} title='Trở về' />
