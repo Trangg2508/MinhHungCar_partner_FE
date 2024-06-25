@@ -110,10 +110,10 @@ export default function ProfileScreen({ navigation }) {
       }
 
       // Validate driveLicense
-      if (driveLicense.length !== 12) {
-        Alert.alert('Lỗi', 'Giấy phép lái xe không hợp lệ. Vui lòng nhập đúng 12 chữ số.');
-        return;
-      }
+      // if (driveLicense.length !== 12) {
+      //   Alert.alert('Lỗi', 'Giấy phép lái xe không hợp lệ. Vui lòng nhập đúng 12 chữ số.');
+      //   return;
+      // }
 
       // Validate year
       const currentYear = new Date().getFullYear();
@@ -316,7 +316,7 @@ export default function ProfileScreen({ navigation }) {
                     value={IDCard}
                   />
                 </View>
-                <View style={styles.input}>
+                {/* <View style={styles.input}>
                   <Text style={styles.inputLabel}>Giấy phép lái xe</Text>
                   <TextInput
                     clearButtonMode="while-editing"
@@ -326,7 +326,7 @@ export default function ProfileScreen({ navigation }) {
                     style={styles.inputControl}
                     value={driveLicense}
                   />
-                </View>
+                </View> */}
                 <View style={styles.formAction}>
                   <TouchableOpacity onPress={submitForm}>
                     <View style={styles.btn}>
