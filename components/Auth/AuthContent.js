@@ -31,16 +31,16 @@ export default function AuthContent({ isLogin, onAuthenticate }) {
         phone_number = phone_number.trim();
 
         const emailIsValid = email.includes('@');
-        const passwordIsValid = password.length > 6;
+        const passwordIsValid = password.length > 4;
         const passwordsAreEqual = password === confirmPassword;
         const firstNameIsValid = first_name.length > 0
         const lastNameIsValid = last_name.length > 0;
         const phoneNumIsValid = /^[0-9]{10,15}$/.test(phone_number);
 
         if (
-            !emailIsValid ||
+            !phoneNumIsValid ||
             !passwordIsValid ||
-            (!isLogin && (!passwordsAreEqual || !firstNameIsValid || !lastNameIsValid || !phoneNumIsValid))
+            (!isLogin && (!passwordsAreEqual || !firstNameIsValid || !lastNameIsValid || !emailIsValid))
         ) {
             Alert.alert('Dữ liệu không hợp lệ', 'Vui lòng kiểm tra giá trị bạn đã nhập.');
             setCredentialsInvalid({
@@ -54,7 +54,7 @@ export default function AuthContent({ isLogin, onAuthenticate }) {
             return;
         }
         if (isLogin) {
-            onAuthenticate({ email, password });
+            onAuthenticate({ phone_number, password });
         } else {
             onAuthenticate({ email, password, last_name, first_name, phone_number })
         }

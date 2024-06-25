@@ -9,7 +9,7 @@ import LoadingOverlay from '../components/UI/LoadingOverlay';
 export default function OTPScreen({ route }) {
     const [otp, setOtp] = useState('');
     const [disabled, setDisabled] = useState(true);
-    const { email } = route.params;
+    const { phone_number } = route.params;
     const navigation = useNavigation();
     const [isLoading, setIsLoading] = useState(false);
 
@@ -22,7 +22,7 @@ export default function OTPScreen({ route }) {
         if (otp.length !== 6) return;
         try {
             setIsLoading(true);
-            await verifyOtp(email, otp);
+            await verifyOtp(phone_number, otp);
             Alert.alert('Thành công', 'Tài khoản của bạn đã được xác minh thành công!');
             navigation.replace('Login');
         } catch (error) {
@@ -42,7 +42,7 @@ export default function OTPScreen({ route }) {
                 <View style={styles.outerContainer}>
                     <View style={styles.titleContainer}>
                         <Text style={styles.title}>Xác minh</Text>
-                        <Text style={styles.detail}>MinhHungCar đã gửi mã OTP đến email của bạn.</Text>
+                        <Text style={styles.detail}>MinhHungCar đã gửi mã OTP đến số điện thoại của bạn.</Text>
                     </View>
                     <View style={styles.innerContainer}>
                         <OtpInput numberOfInputs={6} onChangeText={handleOtpValues} />

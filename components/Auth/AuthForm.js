@@ -103,11 +103,11 @@ export default function AuthForm({ isLogin, onSubmit, credentialsInvalid }) {
                                 </View>
                             )}
 
-                            {!isLogin && (
-                                <View style={styles.input}>
-                                    <Text style={styles.inputLabel}>Số điện thoại  <Text style={{ color: 'red' }}>*</Text></Text>
 
-                                    {/* <TextInput
+                            <View style={styles.input}>
+                                <Text style={styles.inputLabel}>Số điện thoại  <Text style={{ color: 'red' }}>*</Text></Text>
+
+                                {/* <TextInput
                   clearButtonMode="while-editing"
                   onChangeText={phone => setForm({ ...form, phone })}
                   placeholder="0987654321"
@@ -115,28 +115,29 @@ export default function AuthForm({ isLogin, onSubmit, credentialsInvalid }) {
                   style={styles.inputControl}
                   value={form.phone} /> */}
 
-                                    <Input
-                                        // label="Số điện thoại"
-                                        onUpdateValue={updateInputValueHandler.bind(this, 'phone_number')}
-                                        value={enteredPhoneNum}
-                                        // keyboardType="email-address"
-                                        isInvalid={phoneIsInvalid}
-                                        placeholder="0987654321"
-                                    />
-
-                                </View>
-                            )}
-                            <View style={styles.input}>
-                                <Text style={styles.inputLabel}>Địa chỉ email<Text style={{ color: 'red' }}>*</Text></Text>
                                 <Input
-                                    onUpdateValue={updateInputValueHandler.bind(this, 'email')}
-                                    value={enteredEmail}
-                                    keyboardType="email-address"
-                                    isInvalid={emailIsInvalid}
-                                    placeholder="Email"
+                                    // label="Số điện thoại"
+                                    onUpdateValue={updateInputValueHandler.bind(this, 'phone_number')}
+                                    value={enteredPhoneNum}
+                                    // keyboardType="email-address"
+                                    isInvalid={phoneIsInvalid}
+                                    placeholder="0987654321"
                                 />
+
                             </View>
 
+                            {!isLogin && (
+                                <View style={styles.input}>
+                                    <Text style={styles.inputLabel}>Địa chỉ email<Text style={{ color: 'red' }}>*</Text></Text>
+                                    <Input
+                                        onUpdateValue={updateInputValueHandler.bind(this, 'email')}
+                                        value={enteredEmail}
+                                        keyboardType="email-address"
+                                        isInvalid={emailIsInvalid}
+                                        placeholder="Email"
+                                    />
+                                </View>
+                            )}
 
                             <View style={styles.input}>
                                 <Text style={styles.inputLabel}>Mật khẩu  <Text style={{ color: 'red' }}>*</Text></Text>

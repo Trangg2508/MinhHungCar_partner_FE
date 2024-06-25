@@ -5,10 +5,10 @@ import { apiAccount } from '../api/apiConfig';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Alert } from 'react-native';
 
-export async function getUser(email, password) {
+export async function getUser(phone_number, password) {
     try {
         const response = await axios.post(apiAccount.login, {
-            email: email,
+            phone_number: phone_number,
             password: password
         });
         const token = response.data.access_token;
@@ -41,10 +41,10 @@ export async function sendOtpToUser(email, password, first_name, last_name, phon
     }
 }
 
-export async function verifyOtp(email, otp) {
+export async function verifyOtp(phone_number, otp) {
     try {
         const response = await axios.post(apiAccount.verifyOTP, {
-            email,
+            phone_number,
             otp
         });
         return response.status;

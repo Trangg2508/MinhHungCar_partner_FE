@@ -23,10 +23,10 @@ export default function SignInScreen({ navigation }) {
   const [isAuthenticating, setIsAuthenticating] = useState(false)
   const authCtx = useContext(AuthConText)
 
-  const signInHandler = async ({ email, password }) => {
+  const signInHandler = async ({ phone_number, password }) => {
     setIsAuthenticating(true)
     try {
-      const { token } = await getUser(email, password)
+      const { token } = await getUser(phone_number, password)
       console.log('token: ', token);
       // console.log('id: ', userID);
       authCtx.authenticate(token)
