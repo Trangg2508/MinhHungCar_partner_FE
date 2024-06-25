@@ -59,8 +59,6 @@ export default function AddCarInformationScreen({ navigation }) {
     }
   }, [carList]);
 
-
-
   // Get periods data
   const fetchPeriodData = async () => {
     try {
@@ -70,7 +68,6 @@ export default function AddCarInformationScreen({ navigation }) {
         },
       });
       const periods = response.data.periods;
-      // console.log('Fetch periods successfully: ', periods)
       setPeriodData(periods);
     } catch (error) {
       console.log('Error fetching periods:', error);
@@ -86,7 +83,6 @@ export default function AddCarInformationScreen({ navigation }) {
         },
       });
       const fuels = response.data.fuels;
-      // console.log('Fetch fuels successfully: ', fuels)
       setFuelData(fuels);
     } catch (error) {
       console.log('Error fetching fuels:', error);
@@ -102,7 +98,6 @@ export default function AddCarInformationScreen({ navigation }) {
         },
       });
       const motions = response.data.motions;
-      // console.log('Fetch motions successfully: ', motions)
       setMotionData(motions);
     } catch (error) {
       console.log('Error fetching motions:', error);
@@ -118,9 +113,8 @@ export default function AddCarInformationScreen({ navigation }) {
         },
       });
       const parking_lot = response.data.parking_lot;
-      // console.log('Fetch parking_lot successfully: ', parking_lot)
       setParkingLotData(parking_lot);
-      setLoading(false)
+      setLoading(false);
     } catch (error) {
       console.log('Error fetching parking_lot:', error);
     }
@@ -128,18 +122,21 @@ export default function AddCarInformationScreen({ navigation }) {
 
   // Get parking_lot metadata base on seat
   const fetchParkingLotMetadata = async () => {
-    try {
-      const response = await axios.get(`https://minhhungcar.xyz/register_car_metadata/parking_lot?seat_type=${selectedSeat}`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      const parking_lot = response.data;
-      // console.log('Fetch parking_lot successfully: ', parking_lot)
-      setParkingLotMetadata(parking_lot);
-      setLoading(false)
-    } catch (error) {
-      console.log('Error fetching parking_lot:', error);
+    if (selectedSeat) {
+      try {
+        const response = await axios.get(`https://minhhungcar.xyz/register_car_metadata/parking_lot?seat_type=${selectedSeat}`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        const parking_lot = response.data;
+        setParkingLotMetadata(parking_lot);
+        setLoading(false);
+      } catch (error) {
+        console.log('Error fetching parking_lot:', error);
+      }
+    } else {
+      setParkingLotMetadata(parkingLotData);
     }
   };
 
@@ -160,77 +157,85 @@ export default function AddCarInformationScreen({ navigation }) {
     }
   };
 
-
-  const getRemainData = (year) => {
-    // Get car arrays which have year = selected year
+  const fetchRemainData = async (year) => {
     const filteredCars = carList.filter((model) => model.year.toString() === year);
-
-    // Get brands list of above car arrays
     const uniqueBrands = [...new Set(filteredCars.map((model) => model.brand))];
     setBrands(uniqueBrands);
 
-    // If selectedBrand is already set, filter models and seats
-    if (selectedBrand) {
-      const filteredModelsByBrand = filteredCars.filter((model) => model.brand === selectedBrand);
-      const uniqueModels = [...new Set(filteredModelsByBrand.map((model) => model.model))];
-      const uniqueSeats = [...new Set(filteredModelsByBrand.map((model) => model.number_of_seats.toString()))];
-      setModels(uniqueModels);
-      setSeats(uniqueSeats);
+    setSelectedBrand('');
+    setSelectedModel('');
+    setSelectedSeat('');
+
+    if (uniqueBrands.length > 0) {
+      await fetchBrandModelsAndSeats(year, uniqueBrands[0]);
     } else {
       setModels([]);
       setSeats([]);
     }
   };
 
+  const fetchBrandModelsAndSeats = async (year, brand) => {
+    const filteredCars = carList.filter((model) => model.year.toString() === year && model.brand === brand);
+    const uniqueModels = [...new Set(filteredCars.map((model) => model.model))];
+    const uniqueSeats = [...new Set(filteredCars.map((model) => model.number_of_seats.toString()))];
 
-  const handleYearChange = (year) => {
+    setModels(uniqueModels);
+    setSeats(uniqueSeats);
+  };
+
+  const handleYearChange = async (year) => {
     setSelectedYear(year);
+
     setSelectedBrand('');
     setSelectedModel('');
     setSelectedSeat('');
-    getRemainData(year);
+    setBrands([]);
+    setModels([]);
+    setSeats([]);
+    setParkingLotMetadata([]);
+
+    await fetchRemainData(year);
+    await fetchParkingLotMetadata();
   };
 
-  const handleBrandChange = (brand) => {
+  const handleBrandChange = async (brand) => {
     setSelectedBrand(brand);
     setSelectedModel('');
     setSelectedSeat('');
 
-    // Filter cars by selected year and brand
     const filteredCars = carList.filter((m) => m.year.toString() === selectedYear && m.brand === brand);
-
-    // Extract unique models from filtered cars
     const uniqueModels = [...new Set(filteredCars.map((m) => m.model))];
-    console.log('Filtered Models:', uniqueModels);
-
     setModels(uniqueModels);
+
+    setSeats([]);
+    setParkingLotMetadata([]);
   };
+
+
   const handleModelChange = (model) => {
     setSelectedModel(model);
     setSelectedSeat('');
 
-    // Filter cars by selected year, brand, and model
     const filteredModels = carList.filter((m) =>
       m.year.toString() === selectedYear &&
       m.brand === selectedBrand &&
       m.model === model
     );
 
-    // Extract unique seats from filtered models
     const uniqueSeats = [...new Set(filteredModels.map((m) => m.number_of_seats.toString()))];
-    console.log('Filtered Seats:', uniqueSeats);
-
     setSeats(uniqueSeats);
 
+    setParkingLotMetadata([]);
     if (uniqueSeats.length > 0) {
       setSelectedSeat(uniqueSeats[0]);
+      fetchParkingLotMetadata();
     }
 
-    updateCarModelIdAndBasePrice(model, selectedSeat);
+    getCarModelIdAndBasePrice(model, selectedSeat);
   };
 
-  // Function to update carModelId and basePrice based on selected model and seat
-  const updateCarModelIdAndBasePrice = (model, seat) => {
+
+  const getCarModelIdAndBasePrice = (model, seat) => {
     const selectedCarModel = carList.find(
       (m) =>
         m.year.toString() === selectedYear &&
@@ -240,32 +245,26 @@ export default function AddCarInformationScreen({ navigation }) {
     );
 
     if (selectedCarModel) {
-      console.log('selectedCarModel.id:', selectedCarModel.id);
       setCarModelId(selectedCarModel.id);
-      setBasePrice(selectedCarModel.base_price);
+      setBasePrice(selectedCarModel.based_price);
     }
   };
 
   const handleSeatChange = (seat) => {
     setSelectedSeat(seat);
-    updateCarModelIdAndBasePrice(selectedModel, seat);
+    getCarModelIdAndBasePrice(selectedModel, seat);
+    fetchParkingLotMetadata();
   };
 
-
-
-  // Get ID of the newest car
   const getNewestCarId = (cars) => {
     if (!cars || cars.length === 0) {
       return null;
     }
-    // Sort cars by created_at in descending order
     const sortedCars = cars.sort((a, b) => new Date(b.car_model.created_at) - new Date(a.car_model.created_at));
-    // Access the ID of the newest car (first in the sorted array)
     const newestCarId = sortedCars[0]?.id;
     return newestCarId;
   };
 
-  // Get ID of the registered car
   const getIDRegisteredCar = async () => {
     try {
       const response = await axios.get(apiCar.getAllCar, {
@@ -276,16 +275,12 @@ export default function AddCarInformationScreen({ navigation }) {
       const newestCarId = getNewestCarId(response.data.cars);
       if (newestCarId) {
         setId(newestCarId);
-        console.log('ID of the newest car:', newestCarId);
-      } else {
-        console.log('No cars available to get the ID from.');
       }
     } catch (error) {
       console.log('Error fetching id:', error);
     }
   };
 
-  // Function to validate license plate
   const validateLicensePlate = (licensePlate) => {
     licensePlate = licensePlate.trim();
 
@@ -305,7 +300,6 @@ export default function AddCarInformationScreen({ navigation }) {
   };
 
   const handleSubmit = async () => {
-
     if (
       !licensePlate ||
       !carModelId ||
@@ -319,17 +313,13 @@ export default function AddCarInformationScreen({ navigation }) {
       !selectedYear ||
       !selectedSeat
     ) {
-
-
       Alert.alert('Lỗi', 'Vui lòng điền đầy đủ tất cả thông tin');
       return;
     }
 
-    // Check if the license plate length is valid
     if (!validateLicensePlate(licensePlate)) {
-      return; // If license plate is invalid, return early
+      return;
     }
-
 
     try {
       setLoadButton(true);
@@ -351,14 +341,12 @@ export default function AddCarInformationScreen({ navigation }) {
           },
         }
       );
-      console.log('Car created:', response);
       await getIDRegisteredCar();
       const incrementedId = id + 1;
 
       navigation.navigate('AddCarPhoto', { carId: incrementedId, based_price: basePrice });
     } catch (error) {
       Alert.alert('Lỗi', 'Thêm xe thất bại. Vui lòng thử lại!')
-      console.log('Error creating car:', error);
     } finally {
       setLoadButton(false);
     }
@@ -471,6 +459,7 @@ export default function AddCarInformationScreen({ navigation }) {
                     value: null,
                     color: '#9EA0A4',
                   }}
+                  value={selectedBrand}
                   items={brands.map((brand, index) => ({
                     key: index.toString(),
                     label: brand,
@@ -496,6 +485,7 @@ export default function AddCarInformationScreen({ navigation }) {
                     value: null,
                     color: '#9EA0A4',
                   }}
+                  value={selectedModel}
                   items={models.map((model, index) => ({
                     key: index.toString(),
                     label: model,
