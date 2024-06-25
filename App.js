@@ -1,6 +1,6 @@
 import { StatusBar } from 'expo-status-bar';
 import React, { useCallback, useContext, useEffect, useState } from 'react';
-import { StyleSheet, View, TouchableOpacity, Text } from 'react-native';
+import { StyleSheet, View, TouchableOpacity, Text, Button, Alert } from 'react-native';
 import { NavigationContainer, useNavigation } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
@@ -27,6 +27,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import SuccessScreen from './screens/SuccessScreen';
 import ContractScreen from './screens/ContractScreen';
 import PaymentInformationScreen from './screens/PaymentInformationScreen';
+import BackButton from './components/UI/BackButton';
 
 const Stack = createNativeStackNavigator();
 const Bottoms = createBottomTabNavigator();
@@ -150,6 +151,7 @@ const BottomTabs = () => {
 };
 
 const AuthenticatedStack = () => {
+  const navigate = useNavigation()
   return (
     <Stack.Navigator>
       <Stack.Screen
@@ -198,6 +200,11 @@ const AuthenticatedStack = () => {
         options={{
           headerBackTitleVisible: false,
           title: 'Đăng kí xe',
+          gestureEnabled: false,
+          headerLeft: (props) => <BackButton title="Bạn có muốn trở về?"
+            subTitle="Bạn đang ở màn hình thêm ảnh cho xe. Bạn có muốn hủy và trở về?"
+            callBack={() => navigate.goBack()}
+          />
         }}
       />
       <Stack.Screen
@@ -206,6 +213,11 @@ const AuthenticatedStack = () => {
         options={{
           headerBackTitleVisible: false,
           title: 'Đăng kí xe',
+          gestureEnabled: false,
+          headerLeft: (props) => <BackButton title="Bạn có muốn trở về?"
+            subTitle="Bạn đang ở màn hình nhập thông xin xe. Bạn có muốn hủy và trở về?"
+            callBack={() => navigate.navigate("Car")}
+          />
         }}
       />
       <Stack.Screen
@@ -214,6 +226,11 @@ const AuthenticatedStack = () => {
         options={{
           headerBackTitleVisible: false,
           title: 'Đăng kí xe',
+          gestureEnabled: false,
+          headerLeft: (props) => <BackButton title="Bạn có muốn trở về?"
+            subTitle="Bạn đang ở màn hình thêm giấy tờ xe. Bạn có muốn hủy và trở về?"
+            callBack={() => navigate.navigate("Car")}
+          />
         }}
       />
       <Stack.Screen
@@ -222,6 +239,11 @@ const AuthenticatedStack = () => {
         options={{
           headerBackTitleVisible: false,
           title: 'Đăng kí xe',
+          gestureEnabled: false,
+          headerLeft: (props) => <BackButton title="Bạn có muốn trở về?"
+            subTitle="Bạn đang ở màn hình thêm phí thuê xe. Bạn có muốn hủy và trở về?"
+            callBack={() => navigate.navigate("Car")}
+          />
         }}
       />
       <Stack.Screen
