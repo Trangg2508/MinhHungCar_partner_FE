@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 import { SafeAreaView, StyleSheet, Text, View, TouchableOpacity, Alert } from 'react-native';
 import { AuthConText } from '../store/auth-context';
 import axios from 'axios';
@@ -17,7 +17,7 @@ export default function ContractScreen({ navigation }) {
   const [contractStatus, setContractStatus] = useState('')   //3 status: approved, active, waiting_car_delivery
   const [isLoading, setLoading] = useState(true);
   const [isChecked, setIsChecked] = useState(false);
-
+  const webViewRef = useRef();
   useEffect(() => {
     getDetailContract();
   }, []);
@@ -82,8 +82,19 @@ export default function ContractScreen({ navigation }) {
       ) : (
         <>
           <WebView
+            ref={webViewRef}
+            contentMode='desktop'
             source={{ uri: `https://docs.google.com/gview?embedded=true&url=${pdfURL}` }}
             style={styles.webview}
+            onLoadEnd={data => {
+              const { nativeEvent } = data
+              const { title } = nativeEvent
+              if (!title.trim()) {
+                webViewRef.current?.stopLoading();
+                webViewRef.current?.reload();
+                setRefresh(prev => !prev)
+              }
+            }}
           />
           {contractStatus === 'waiting_for_agreement' &&
             <>
