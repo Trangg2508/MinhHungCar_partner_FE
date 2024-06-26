@@ -17,6 +17,7 @@ export default function ContractScreen({ navigation }) {
   const [contractStatus, setContractStatus] = useState('')   //3 status: approved, active, waiting_car_delivery
   const [isLoading, setLoading] = useState(true);
   const [isChecked, setIsChecked] = useState(false);
+  const [refresh, setRefresh] = useState(true)
   const webViewRef = useRef();
   useEffect(() => {
     getDetailContract();
