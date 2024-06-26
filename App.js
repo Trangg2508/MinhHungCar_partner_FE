@@ -166,7 +166,7 @@ const AuthenticatedStack = () => {
         name='Detail'
         component={DetailScreen}
         options={{
-          title: 'Chi tiết sản phẩm',
+          title: 'Chi tiết xe',
           headerBackTitleVisible: false,
         }}
       />

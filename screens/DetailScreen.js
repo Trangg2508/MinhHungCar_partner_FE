@@ -19,29 +19,6 @@ import axios from 'axios';
 import LoadingOverlay from '../components/UI/LoadingOverlay';
 
 
-const IMAGES = [
-  'https://images.unsplash.com/photo-1617704548623-340376564e68?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8Nnx8dGVzbGElMjBtb2RlbCUyMHN8ZW58MHx8MHx8&auto=format&fit=crop&w=800&q=60',
-  'https://images.unsplash.com/photo-1639358336404-b847ac2a3272?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2340&q=80',
-  'https://images.unsplash.com/photo-1652509525608-6b44097ea5a7?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8NjN8fHRlc2xhJTIwbW9kZWwlMjBzfGVufDB8fDB8fA%3D%3D&auto=format&fit=crop&w=800&q=60',
-];
-
-const characters = [
-  {
-    img: require('../assets/transmission.png'),
-    label: 'Truyền động',
-    content: 'Số tự động'
-  },
-  {
-    img: require('../assets/seat.png'),
-    label: 'Số ghế',
-    content: '4 chỗ'
-  },
-  {
-    img: require('../assets/gasoline.png'),
-    label: 'Nhiên liệu',
-    content: 'Điện'
-  },
-];
 
 const comments = [
   {
@@ -74,11 +51,7 @@ export default function DetailScreen({ navigation }) {
 
   const getDetailCar = async () => {
     try {
-      const response = await axios.get(`https://minhhungcar.xyz/car/${detailID}`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        }
-      })
+      const response = await axios.get(`https://minhhungcar.xyz/car/${detailID}`)
       setDetailCar(response.data)
       console.log('Fetch successfully: ', response.data)
       setLoading(false)
@@ -100,39 +73,11 @@ export default function DetailScreen({ navigation }) {
       ) : (
         <SafeAreaView style={{ flex: 1, backgroundColor: '#fff' }}>
           <View style={styles.container}>
-            <View style={styles.header}>
-              <View style={styles.headerAction}>
-                <TouchableOpacity
-                  onPress={() => {
-                    // handle onPress
-                  }}>
-                  {/* <FeatherIcon
-                    color="#000"
-                    name="arrow-left"
-                    size={24} /> */}
-                </TouchableOpacity>
-              </View>
-
-              <Text style={styles.headerTitle}>{detailCar.car_model?.brand + ' ' + detailCar.car_model?.model}</Text>
-
-              <View style={[styles.headerAction, { alignItems: 'flex-end' }]}>
-                <TouchableOpacity
-                  onPress={() => {
-                    // handle onPress
-                  }}>
-                  {/* <FeatherIcon
-                    color="#000"
-                    name="more-vertical"
-                    size={24} /> */}
-                </TouchableOpacity>
-              </View>
-            </View>
 
             <ScrollView contentContainerStyle={{ paddingBottom: 100 }}>
               <View style={styles.photos}>
                 {Array.isArray(detailCar.images) && detailCar.images.length > 0 ? (
                   <Swiper
-                    loop={false}
                     renderPagination={(index, total) => (
                       <View style={styles.photosPagination}>
                         <Text style={styles.photosPaginationText}>

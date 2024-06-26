@@ -13,7 +13,6 @@ import {
   TouchableOpacity,
   Image,
 } from 'react-native';
-import FeatherIcon from 'react-native-vector-icons/Feather';
 import { AuthConText } from '../store/auth-context';
 import LoadingOverlay from '../components/UI/LoadingOverlay';
 import axios from 'axios';
