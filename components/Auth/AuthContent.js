@@ -1,25 +1,27 @@
-import { View, Text, StyleSheet, Alert, TouchableOpacity } from 'react-native'
-import React, { useState } from 'react'
-import { useNavigation } from '@react-navigation/native'
-import AuthForm from './AuthForm'
+import { View, Text, StyleSheet, Alert, TouchableOpacity } from 'react-native';
+import React, { useState } from 'react';
+import { useNavigation } from '@react-navigation/native';
+import AuthForm from './AuthForm';
+
 export default function AuthContent({ isLogin, onAuthenticate }) {
-    const navigation = useNavigation()
+    const navigation = useNavigation();
     const [credentialsInvalid, setCredentialsInvalid] = useState({
         email: false,
         password: false,
         confirmPassword: false,
         last_name: false,
         first_name: false,
-        phone_number: false
-    })
+        phone_number: false,
+    });
 
     const switchAuthModeHandler = () => {
         if (isLogin) {
-            navigation.replace('Register')
+            navigation.replace('Register');
         } else {
-            navigation.replace('Login')
+            navigation.replace('Login');
         }
-    }
+    };
+
     const submitHandler = (credentials) => {
         let { email, password, confirmPassword, phone_number, first_name, last_name } = credentials;
 
@@ -33,7 +35,7 @@ export default function AuthContent({ isLogin, onAuthenticate }) {
         const emailIsValid = email.includes('@');
         const passwordIsValid = password.length > 4;
         const passwordsAreEqual = password === confirmPassword;
-        const firstNameIsValid = first_name.length > 0
+        const firstNameIsValid = first_name.length > 0;
         const lastNameIsValid = last_name.length > 0;
         const phoneNumIsValid = /^[0-9]{10,15}$/.test(phone_number);
 
@@ -49,16 +51,17 @@ export default function AuthContent({ isLogin, onAuthenticate }) {
                 confirmPassword: !passwordIsValid || !passwordsAreEqual,
                 first_name: !firstNameIsValid,
                 last_name: !lastNameIsValid,
-                phone_number: !phoneNumIsValid
+                phone_number: !phoneNumIsValid,
             });
             return;
         }
         if (isLogin) {
             onAuthenticate({ phone_number, password });
         } else {
-            onAuthenticate({ email, password, last_name, first_name, phone_number })
+            onAuthenticate({ email, password, last_name, first_name, phone_number });
         }
-    }
+    };
+
     return (
         <View style={styles.authContent}>
             <AuthForm
@@ -68,21 +71,19 @@ export default function AuthContent({ isLogin, onAuthenticate }) {
             />
             <View style={styles.buttons}>
                 <TouchableOpacity onPress={switchAuthModeHandler}>
-                    {isLogin ?
+                    {isLogin ? (
                         <Text style={styles.formFooter}>
-                            Chưa có tài khoản?{' '}
-                            <Text style={{ color: '#5548E2' }}>Đăng kí</Text>
+                            Chưa có tài khoản? <Text style={{ color: '#5548E2' }}>Đăng kí</Text>
                         </Text>
-                        :
+                    ) : (
                         <Text style={styles.formFooter}>
-                            Đã có tài khoản?{' '}
-                            <Text style={{ color: '#5548E2' }}>Đăng nhập</Text>
+                            Đã có tài khoản? <Text style={{ color: '#5548E2' }}>Đăng nhập</Text>
                         </Text>
-                    }
+                    )}
                 </TouchableOpacity>
             </View>
         </View>
-    )
+    );
 }
 
 const styles = StyleSheet.create({
@@ -90,7 +91,7 @@ const styles = StyleSheet.create({
         marginHorizontal: 18,
         padding: 16,
         borderRadius: 8,
-        flex: 1
+        flex: 1,
     },
     buttons: {
         marginTop: 20,

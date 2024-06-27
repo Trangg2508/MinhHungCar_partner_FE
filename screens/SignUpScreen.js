@@ -16,7 +16,6 @@ import { sendOtpToUser } from '../util/auth';
 
 export default function SignUpScreen() {
   const [isAuthenticating, setIsAuthenticating] = useState(false);
-  const [isExist, setIsExist] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const navigation = useNavigation();
 
@@ -24,20 +23,19 @@ export default function SignUpScreen() {
     setIsLoading(true);
 
     try {
-      await sendOtpToUser(email, password, last_name, first_name, phone_number);
-      navigation.navigate('Register', {
-        email,
-        password,
-        last_name,
-        first_name,
-        phone_number
-      });
-    } catch (error) {
-      if (error.response?.status === 400) {
-        Alert.alert('Đăng kí thất bại', 'Tài khoản này đã có người đăng kí');
-      } else {
-        Alert.alert('Lỗi đăng kí', error.response?.data || 'Vui lòng thử lại');
+      const status = await sendOtpToUser(email, password, last_name, first_name, phone_number);
+
+      if (status === 200) { // Check if the response status is 200 (success)
+        navigation.navigate('OTP', {
+          email,
+          password,
+          last_name,
+          first_name,
+          phone_number
+        });
       }
+    } catch (error) {
+      // Error handling is already done in sendOtpToUser function
     } finally {
       setIsLoading(false);
     }

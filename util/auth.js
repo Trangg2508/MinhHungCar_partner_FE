@@ -1,15 +1,13 @@
-
 import axios from 'axios';
 import { apiAccount } from '../api/apiConfig';
-// import axios from '../lib/axios'
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Alert } from 'react-native';
 
 export async function getUser(phone_number, password) {
     try {
         const response = await axios.post(apiAccount.login, {
-            phone_number: phone_number,
-            password: password
+            phone_number,
+            password,
         });
         const token = response.data.access_token;
 
@@ -17,8 +15,7 @@ export async function getUser(phone_number, password) {
 
         return { token };
     } catch (error) {
-        Alert.alert("Đăng nhập thất bại!", "Vui lòng kiểm tra lại!");
-
+        Alert.alert('Đăng nhập thất bại!', 'Vui lòng kiểm tra lại!');
     }
 }
 
@@ -29,15 +26,19 @@ export async function sendOtpToUser(email, password, first_name, last_name, phon
             last_name,
             phone_number,
             email,
-            password
+            password,
         });
         return response.status;
     } catch (error) {
-        if (error.response?.status === 400) {
-            Alert.alert('Đăng kí thất bại', 'Tài khoản này đã có người đăng kí');
+        const errorMessage = error.response?.data || 'Đã xảy ra lỗi, vui lòng thử lại sau.';
+        const status = error.response?.status;
+
+        if (status === 400) {
+            Alert.alert('Đăng kí thất bại', 'Số điện thoại này đã được đăng ký bởi người khác.');
         } else {
-            Alert.alert('Lỗi đăng kí', error.response?.data || 'Vui lòng thử lại');
+            Alert.alert('Lỗi đăng kí', errorMessage);
         }
+        throw error;
     }
 }
 
@@ -45,7 +46,7 @@ export async function verifyOtp(phone_number, otp) {
     try {
         const response = await axios.post(apiAccount.verifyOTP, {
             phone_number,
-            otp
+            otp,
         });
         return response.status;
     } catch (error) {

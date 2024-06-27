@@ -5,7 +5,6 @@ import {
     View,
     Text,
     TouchableOpacity,
-    TextInput,
     ScrollView,
 } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
@@ -40,13 +39,13 @@ export default function AuthForm({ isLogin, onSubmit, credentialsInvalid }) {
                 setEnteredConfirmPassword(enteredValue);
                 break;
             case 'first_name':
-                setEnteredFirstName(enteredValue)
+                setEnteredFirstName(enteredValue);
                 break;
             case 'last_name':
-                setEnteredLastName(enteredValue)
+                setEnteredLastName(enteredValue);
                 break;
             case 'phone_number':
-                setEnteredPhoneNum(enteredValue)
+                setEnteredPhoneNum(enteredValue);
                 break;
         }
     }
@@ -65,7 +64,7 @@ export default function AuthForm({ isLogin, onSubmit, credentialsInvalid }) {
     return (
         <SafeAreaView style={{ flex: 1, backgroundColor: '#fff' }}>
             <ScrollView>
-                <View >
+                <View style={styles.container}>
                     <KeyboardAwareScrollView>
 
                         <View style={styles.form}>
@@ -75,10 +74,7 @@ export default function AuthForm({ isLogin, onSubmit, credentialsInvalid }) {
                                         <Text style={{ color: 'red' }}>*</Text>
                                     </Text>
                                     <Input
-                                        onUpdateValue={updateInputValueHandler.bind(
-                                            this,
-                                            'first_name'
-                                        )}
+                                        onUpdateValue={updateInputValueHandler.bind(this, 'first_name')}
                                         value={enteredFirstName}
                                         isInvalid={firstNameIsInvalid}
                                         placeholder='Nguyễn'
@@ -88,14 +84,9 @@ export default function AuthForm({ isLogin, onSubmit, credentialsInvalid }) {
 
                             {!isLogin && (
                                 <View style={styles.input}>
-                                    <Text style={styles.inputLabel}>Tên  <Text style={{ color: 'red' }}>*</Text>
-                                    </Text>
-
+                                    <Text style={styles.inputLabel}>Tên  <Text style={{ color: 'red' }}>*</Text></Text>
                                     <Input
-                                        onUpdateValue={updateInputValueHandler.bind(
-                                            this,
-                                            'last_name'
-                                        )}
+                                        onUpdateValue={updateInputValueHandler.bind(this, 'last_name')}
                                         placeholder='Văn A'
                                         value={enteredLastName}
                                         isInvalid={lastNameIsInvalid}
@@ -103,27 +94,14 @@ export default function AuthForm({ isLogin, onSubmit, credentialsInvalid }) {
                                 </View>
                             )}
 
-
                             <View style={styles.input}>
                                 <Text style={styles.inputLabel}>Số điện thoại  <Text style={{ color: 'red' }}>*</Text></Text>
-
-                                {/* <TextInput
-                  clearButtonMode="while-editing"
-                  onChangeText={phone => setForm({ ...form, phone })}
-                  placeholder="0987654321"
-                  placeholderTextColor="#6b7280"
-                  style={styles.inputControl}
-                  value={form.phone} /> */}
-
                                 <Input
-                                    // label="Số điện thoại"
                                     onUpdateValue={updateInputValueHandler.bind(this, 'phone_number')}
                                     value={enteredPhoneNum}
-                                    // keyboardType="email-address"
                                     isInvalid={phoneIsInvalid}
                                     placeholder="0987654321"
                                 />
-
                             </View>
 
                             {!isLogin && (
@@ -141,7 +119,6 @@ export default function AuthForm({ isLogin, onSubmit, credentialsInvalid }) {
 
                             <View style={styles.input}>
                                 <Text style={styles.inputLabel}>Mật khẩu  <Text style={{ color: 'red' }}>*</Text></Text>
-
                                 <Input
                                     onUpdateValue={updateInputValueHandler.bind(this, 'password')}
                                     secure
@@ -154,13 +131,8 @@ export default function AuthForm({ isLogin, onSubmit, credentialsInvalid }) {
                             {!isLogin && (
                                 <View style={styles.input}>
                                     <Text style={styles.inputLabel}>Xác nhận mật khẩu  <Text style={{ color: 'red' }}>*</Text></Text>
-
                                     <Input
-                                        // label="Confirm Password"
-                                        onUpdateValue={updateInputValueHandler.bind(
-                                            this,
-                                            'confirmPassword'
-                                        )}
+                                        onUpdateValue={updateInputValueHandler.bind(this, 'confirmPassword')}
                                         secure
                                         value={enteredConfirmPassword}
                                         isInvalid={passwordsDontMatch}
@@ -169,27 +141,18 @@ export default function AuthForm({ isLogin, onSubmit, credentialsInvalid }) {
                                 </View>
                             )}
 
-
-
                             <View style={styles.formAction}>
-                                <TouchableOpacity
-                                    onPress={submitHandler}>
+                                <TouchableOpacity onPress={submitHandler}>
                                     <View style={styles.btn}>
-                                        {isLogin ?
-                                            <Text style={styles.btnText}>Đăng nhập</Text>
-                                            :
-                                            <Text style={styles.btnText}>Đăng kí</Text>}
+                                        <Text style={styles.btnText}>{isLogin ? 'Đăng nhập' : 'Đăng kí'}</Text>
                                     </View>
                                 </TouchableOpacity>
                             </View>
+
                             {isLogin && (
                                 <>
                                     <Text style={styles.formActionSpacer}>hoặc tiếp tục với</Text>
-                                    <TouchableOpacity
-                                        onPress={() => {
-                                            // handle onPress
-                                        }}
-                                    >
+                                    <TouchableOpacity onPress={() => { /* handle onPress */ }}>
                                         <View style={styles.btnSecondary}>
                                             <Text style={styles.btnSecondaryText}>Google</Text>
                                             <View style={{ width: 15 }} />
@@ -199,7 +162,6 @@ export default function AuthForm({ isLogin, onSubmit, credentialsInvalid }) {
                             )}
                         </View>
                     </KeyboardAwareScrollView>
-
                 </View>
             </ScrollView>
         </SafeAreaView>
@@ -227,7 +189,6 @@ const styles = StyleSheet.create({
         color: '#929292',
         textAlign: 'center'
     },
-    /** Header */
     header: {
         alignItems: 'center',
         justifyContent: 'center',
@@ -235,7 +196,6 @@ const styles = StyleSheet.create({
         marginTop: 18,
         marginBottom: 36
     },
-    /** Form */
     form: {
         marginBottom: 24,
         paddingHorizontal: 0,
@@ -246,8 +206,6 @@ const styles = StyleSheet.create({
     formAction: {
         marginVertical: 5,
     },
-
-    /** Input */
     input: {
         marginBottom: 30,
     },
@@ -267,7 +225,6 @@ const styles = StyleSheet.create({
         color: '#222',
         borderStyle: 'solid',
     },
-    /** Button */
     btn: {
         flexDirection: 'row',
         alignItems: 'center',
