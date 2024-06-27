@@ -50,9 +50,16 @@ export default function MyCar({ navigation }) {
   const [page, setPage] = useState(1); // State for pagination
 
   const isFocused = useIsFocused();
+
   useEffect(() => {
     getRegisteredCar();
   }, [activeTab, page, isFocused]);
+
+  useFocusEffect(
+    useCallback(() => {
+      getRegisteredCar();
+    }, [activeTab, page, isFocused])
+  );
 
   console.log(isFocused);
   // const loadMoreItem = () => {
@@ -156,7 +163,7 @@ export default function MyCar({ navigation }) {
           )}
           <View style={styles.cardBody}>
             <Text style={styles.cardTitle}>{`${item.car_model.brand} ${item.car_model.model}`}</Text>
-            <Text style={styles.cardTag}>{`Biển số xe: ${item.license_plate.toUpperCase()}`}</Text>
+            <Text style={styles.cardTag}>{`Biển số xe: ${item.license_plate}`}</Text>
             <View style={styles.cardRow}>
               <View style={[styles.statusContainer, getStatusStyles(item.status)]}>
                 <Text style={{ color: getStatusStyles(item.status).color }}>
@@ -289,7 +296,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: '#939393',
     marginBottom: 9,
-    textTransform: 'capitalize',
+    textTransform: 'uppercase',
   },
   cardTitle: {
     fontSize: 18,

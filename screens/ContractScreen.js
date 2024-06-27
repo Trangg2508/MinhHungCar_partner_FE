@@ -35,7 +35,7 @@ export default function ContractScreen({ navigation }) {
       console.log('Fetch contract successfully!');
       setTimeout(() => {
         setLoading(false);
-      }, 4500);
+      }, 1500);
     } catch (error) {
       console.log('Fetch contract error: ', error);
       setLoading(false);

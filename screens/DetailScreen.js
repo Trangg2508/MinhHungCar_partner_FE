@@ -173,7 +173,7 @@ export default function DetailScreen({ navigation }) {
                   </View>
 
                   <View style={styles.card}>
-                    <Image source={require('../assets/transmission.png')} style={styles.cardImg} />
+                    <Image source={require('../assets/gasoline.png')} style={styles.cardImg} />
                     <Text style={styles.cardLabel}>Nhiên liệu</Text>
                     <Text style={styles.cardContent}>
                       {detailCar.fuel === 'electricity' ? 'Điện' : (detailCar.fuel === 'oil' ? 'Dầu' : 'Xăng')}
