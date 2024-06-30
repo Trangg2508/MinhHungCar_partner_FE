@@ -248,6 +248,7 @@ export default function ProfileScreen({ navigation }) {
                     style={styles.inputControl}
                     keyboardType="numeric"
                     value={phoneNum}
+                    editable={false}
                   />
                 </View>
                 <View style={styles.input}>
@@ -316,17 +317,7 @@ export default function ProfileScreen({ navigation }) {
                     value={IDCard}
                   />
                 </View>
-                {/* <View style={styles.input}>
-                  <Text style={styles.inputLabel}>Giấy phép lái xe</Text>
-                  <TextInput
-                    clearButtonMode="while-editing"
-                    onChangeText={(dl) => setDriveLicense(dl)}
-                    placeholder="000000000000"
-                    placeholderTextColor="#6b7280"
-                    style={styles.inputControl}
-                    value={driveLicense}
-                  />
-                </View> */}
+
                 <View style={styles.formAction}>
                   <TouchableOpacity onPress={submitForm}>
                     <View style={styles.btn}>

@@ -15,7 +15,7 @@ const SuccessScreen = ({ navigation }) => {
                 Bạn đã gửi yêu cầu đăng kí cho thuê xe thành công. Vui lòng đợi phản hồi từ MinhHungCar.
             </Text>
             <TouchableOpacity style={styles.button} onPress={() => { navigation.navigate('Car') }}>
-                <Text style={styles.buttonText}>Trở về Trang chủ</Text>
+                <Text style={styles.buttonText}>Trở về trang Xe của tôi</Text>
             </TouchableOpacity>
         </View>
     );
