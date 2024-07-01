@@ -137,6 +137,7 @@ export default function ProfileScreen({ navigation }) {
         identification_card_number: IDCard,
         date_of_birth: formattedDob,
         driving_license: driveLicense,
+        email: email
       };
 
       const response = await axios.put(apiAccount.updateProfile, formData, {
@@ -260,13 +261,13 @@ export default function ProfileScreen({ navigation }) {
                   <TextInput
                     autoCapitalize="none"
                     autoCorrect={false}
+                    onChangeText={(email) => setEmail(email)}
                     clearButtonMode="while-editing"
                     keyboardType="email-address"
                     placeholder="abc123@gmail.com"
                     placeholderTextColor="#B2B2B2"
                     style={styles.inputControl}
                     value={email}
-                    editable={false}
                   />
                 </View>
                 <View style={styles.input}>
