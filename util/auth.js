@@ -42,16 +42,20 @@ export async function sendOtpToUser(email, password, first_name, last_name, phon
             email,
             password,
         });
-        return response.data.message;
+        return response.status;
     } catch (error) {
-        if (error.response.data.error_code === 10062) {
-            Alert.alert('Tài khoản đã được đăng kí', 'Vui lòng kiểm tra lại');
-        } else if (error.response.data.error_code === 10010) {
-            Alert.alert('Không thể xác thực OTP', 'Vui lòng thử lại sau')
-        } else if (error.response.data.error_code === 10047) {
-            Alert.alert('Không thể gửi OTP', 'Vui lòng thử lại sau')
+        if (error.response) {
+            if (error.response.data.error_code === 10062) {
+                Alert.alert('Tài khoản đã được đăng kí', 'Vui lòng kiểm tra lại');
+            } else if (error.response.data.error_code === 10010) {
+                Alert.alert('Không thể xác thực OTP', 'Vui lòng thử lại sau');
+            } else if (error.response.data.error_code === 10047) {
+                Alert.alert('Không thể gửi OTP', 'Vui lòng thử lại sau');
+            } else {
+                Alert.alert('Đăng kí thất bại!', 'Vui lòng kiểm tra lại!');
+            }
         } else {
-            Alert.alert('Đăng nhập thất bại!', 'Vui lòng kiểm tra lại!');
+            Alert.alert('Đăng kí thất bại!', 'Vui lòng kiểm tra lại!');
         }
     }
 }

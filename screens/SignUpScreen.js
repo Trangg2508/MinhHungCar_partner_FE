@@ -5,9 +5,7 @@ import {
   SafeAreaView,
   View,
   Text,
-  TouchableOpacity,
   ScrollView,
-  Alert
 } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import LoadingOverlay from '../components/UI/LoadingOverlay';
@@ -15,7 +13,6 @@ import AuthContent from '../components/Auth/AuthContent';
 import { sendOtpToUser } from '../util/auth';
 
 export default function SignUpScreen() {
-  const [isAuthenticating, setIsAuthenticating] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const navigation = useNavigation();
 
@@ -25,7 +22,7 @@ export default function SignUpScreen() {
     try {
       const status = await sendOtpToUser(email, password, last_name, first_name, phone_number);
 
-      if (status === 200) { // Check if the response status is 200 (success)
+      if (status === 200) {
         navigation.navigate('OTP', {
           email,
           password,
@@ -35,7 +32,7 @@ export default function SignUpScreen() {
         });
       }
     } catch (error) {
-      // Error handling is already done in sendOtpToUser function
+      console.error('Sign Up Error:', error);
     } finally {
       setIsLoading(false);
     }
@@ -45,7 +42,6 @@ export default function SignUpScreen() {
     <SafeAreaView style={{ flex: 1, backgroundColor: '#fff' }}>
       {isLoading && <LoadingOverlay />}
       <ScrollView>
-        {isAuthenticating && <LoadingOverlay message='' />}
         <View style={styles.container}>
           <KeyboardAwareScrollView>
             <View style={styles.header}>
@@ -67,8 +63,6 @@ const styles = StyleSheet.create({
     paddingVertical: 24,
     paddingHorizontal: 0,
     flexGrow: 1,
-    flexShrink: 1,
-    flexBasis: 0,
   },
   title: {
     fontSize: 32,
@@ -89,12 +83,5 @@ const styles = StyleSheet.create({
     paddingHorizontal: 24,
     marginTop: 18,
     marginBottom: 36
-  },
-  formFooter: {
-    fontSize: 15,
-    fontWeight: '500',
-    color: '#222',
-    textAlign: 'center',
-    marginBottom: 70,
   },
 });
