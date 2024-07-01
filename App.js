@@ -28,6 +28,7 @@ import SuccessScreen from './screens/SuccessScreen';
 import ContractScreen from './screens/ContractScreen';
 import PaymentInformationScreen from './screens/PaymentInformationScreen';
 import BackButton from './components/UI/BackButton';
+import UploadQR from './screens/UploadQR';
 
 const Stack = createNativeStackNavigator();
 const Bottoms = createBottomTabNavigator();
@@ -268,6 +269,14 @@ const AuthenticatedStack = () => {
         options={{
           headerBackTitleVisible: false,
           title: 'Thông tin thanh toán',
+        }}
+      />
+      <Stack.Screen
+        name='UpQR'
+        component={UploadQR}
+        options={{
+          headerBackTitleVisible: false,
+          title: 'Cập nhật mã QR',
         }}
       />
     </Stack.Navigator>

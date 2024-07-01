@@ -53,18 +53,18 @@ export default function PaymentInformationScreen({ navigation }) {
         }
       });
 
-      if (response.data) {
-        setBankOwner(response.data.bank_owner || '');
-        setBankNum(response.data.bank_number || '');
-        setSelectedBank(response.data.bank_name || '');
-        setQRUrl(response.data.qr_code_url || null)
+      if (response.data.data) {
+        setBankOwner(response.data.data.bank_owner || '');
+        setBankNum(response.data.data.bank_number || '');
+        setSelectedBank(response.data.data.bank_name || '');
+        setQRUrl(response.data.data.qr_code_url || null)
         console.log('Fetch success: ', response.data);
       } else {
         console.log('No data returned for payment info.');
       }
       setLoading(false);
     } catch (error) {
-      console.log('Fetch info failed: ', error);
+      console.log('Fetch info failed: ', error.response.data.message);
       setLoading(false);
     }
   };
@@ -77,14 +77,14 @@ export default function PaymentInformationScreen({ navigation }) {
         }
       });
 
-      if (response.data && response.data.banks) {
-        setBanks(response.data.banks);
-        console.log('Fetch success: ', response.data.banks);
+      if (response.data.data && response.data.data.banks) {
+        setBanks(response.data.data.banks);
+        console.log('Fetch success: ', response.data.data.banks);
       } else {
         console.log('No data returned for bank list.');
       }
     } catch (error) {
-      console.log('Fetch banks failed: ', error);
+      console.log("Error get bank data: ", error.response.data.message)
     } finally {
       setLoading(false);
     }
@@ -126,56 +126,21 @@ export default function PaymentInformationScreen({ navigation }) {
         });
 
       Alert.alert('Thành công', 'Bạn đã cập nhật thông tin thành công');
-      console.log('Update success: ', response.data.status);
+      console.log('Update success: ', response.data.message);
 
     } catch (error) {
-      Alert.alert('Thất bại', 'Không thể cập nhật thông tin. Vui lòng thử lại');
-      console.log('Update failed: ', error);
-    }
-  };
+      if (error.response.data.error_code === 10022) {
+        Alert.alert('Thất bại', 'Không thể cập nhật thông tin. Vui lòng thử lại');
 
-  const uploadQR = async () => {
-    const imageFormData = new FormData();
-    imageFormData.append('file', {
-      uri: image.selectedImage,
-      name: 'QR.jpg',
-      type: 'image/jpeg',
-    });
-
-    try {
-      const response = await axios.post(apiPayment.uploadQR, imageFormData, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'Content-Type': 'multipart/form-data',
-        },
-      });
-      if (response.status === 200 || response.status === 201) {
-        setQRUrl(response.data.qr_code_url);
-        console.log('Upload image successfully: ', response.data);
       } else {
-        console.log('Unexpected response status for image upload:', response.status);
-        Alert.alert('Lỗi', 'Đã xảy ra lỗi khi tải lên hình ảnh.');
+        console.log('Update failed: ', error.response.data.message);
+
       }
-    } catch (error) {
-      console.log('Upload image failed!', error);
-      Alert.alert('Lỗi', 'Đã xảy ra lỗi khi tải lên hình ảnh.');
     }
   };
 
-  const handleSubmit = async () => {
-    if (isImageChanged && isInfoChanged) {
-      await uploadQR();
-      await updatePaymentInfo();
-    } else if (isImageChanged) {
-      await uploadQR();
-    } else if (isInfoChanged) {
-      await updatePaymentInfo();
-    } else {
-      Alert.alert('Lỗi', 'Không có thay đổi nào để cập nhật.');
-    }
-  };
 
-  // Calculate maximum width for picker based on longest bank name
+
   const longestBankName = banks.reduce((max, bank) => (bank.length > max ? bank.length : max), 0);
   const pickerWidth = longestBankName * 10;
 
@@ -249,30 +214,21 @@ export default function PaymentInformationScreen({ navigation }) {
                 <Text style={styles.dividerText}>hoặc với mã QR</Text>
                 <Divider style={styles.divider} />
               </View>
-              <View style={{ justifyContent: 'center', alignItems: 'center' }}>
-                <View style={styles.uploadContainer}>
-                  <TouchableOpacity onPress={pickImage} style={styles.QRUploadButton}>
-                    <Text style={{ fontWeight: 'bold' }}>Tải lên</Text>
-                    <Image style={styles.uploadIcon} source={require('../assets/upload.png')} />
-                  </TouchableOpacity>
-                </View>
-                <View style={styles.QR}>
-                  {imageLoading ? (
-                    <ActivityIndicator message='' />
-                  ) : image.selectedImage ? (
-                    <Image key={image.selectedImage} style={styles.qrImage} source={{ uri: image.selectedImage }} />
-                  ) : QRUrl ? (
-                    <Image style={styles.qrImage} source={{ uri: QRUrl }} />
-                  ) : (
-                    <Image
-                      source={{ uri: 'https://cdn.ttgtmedia.com/rms/misc/qr_code_barcode.jpg' }}
-                      style={styles.qrImageDefault}
-                    />
-                  )}
-                </View>
+
+              <View style={styles.formActionDriving}>
+                <TouchableOpacity
+                  onPress={() => {
+                    navigation.navigate('UpQR')
+                  }}>
+                  <View style={styles.btnDriving}>
+                    <Image style={{ width: 25, height: 25, marginRight: 10 }} source={require('../assets/IDCard.png')} />
+                    <Text style={styles.btnDrivingText}>Upload mã QR</Text>
+                    <Image style={{ width: 20, height: 20, }} source={require('../assets/right.png')} />
+                  </View>
+                </TouchableOpacity>
               </View>
               <View style={styles.formAction}>
-                <TouchableOpacity onPress={handleSubmit}>
+                <TouchableOpacity onPress={updatePaymentInfo}>
                   <View style={styles.btn}>
                     <Text style={styles.btnText}>Lưu</Text>
                   </View>
@@ -394,6 +350,26 @@ const styles = StyleSheet.create({
     marginBottom: 5,
     marginTop: 8,
     borderRadius: 10
+  },
+  formActionDriving: {
+    marginVertical: 10
+  },
+  btnDriving: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: 8,
+    paddingVertical: 16,
+    paddingHorizontal: 16,
+    borderWidth: 1,
+    borderColor: '#CCCCCC',
+    flexDirection: 'row'
+  },
+  btnDrivingText: {
+    fontSize: 14,
+    lineHeight: 24,
+    fontWeight: '600',
+    flex: 1,
   },
 
 });

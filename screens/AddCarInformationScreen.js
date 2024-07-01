@@ -125,11 +125,15 @@ export default function AddCarInformationScreen({ navigation }) {
             Authorization: `Bearer ${token}`,
           },
         });
-        const parking_lot = response.data;
+        const parking_lot = response.data.data;
         setParkingLotMetadata(parking_lot);
         setLoading(false);
       } catch (error) {
-        console.log('Error fetching parking_lot:', error);
+        if (error.response.data.error_code === 10044) {
+          Alert.alert('Lỗi', 'Không thể lấy dữ liệu của chỗ để xe');
+        } else {
+          Alert.alert('Lỗi hệ thống', 'Không thể lấy dữ liệu của chỗ để xe');
+        }
       }
     } else {
       setParkingLotMetadata(parkingLotData);
@@ -307,8 +311,8 @@ export default function AddCarInformationScreen({ navigation }) {
         }
       );
 
-      setId(response.data.car.id);
-      setBasePrice(response.data.car.car_model.based_price);
+      setId(response.data.data.car.id);
+      setBasePrice(response.data.data.car.car_model.based_price);
     } catch (error) {
       Alert.alert('Lỗi', 'Thêm xe thất bại. Vui lòng thử lại!');
     } finally {

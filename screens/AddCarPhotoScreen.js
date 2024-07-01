@@ -12,8 +12,6 @@ export default function AddCarPhotoScreen({ navigation }) {
     const { carId, based_price } = route.params;
     const authCtx = useContext(AuthConText);
     const token = authCtx.access_token;
-    console.log('carId: ', carId)
-    console.log('based_price: ', based_price)
 
     const [mainImages, setMainImages] = useState({
         selectedImage: null,
@@ -37,7 +35,7 @@ export default function AddCarPhotoScreen({ navigation }) {
             quality: 1,
         });
 
-        if (!result.canceled) {
+        if (!result.cancelled) {
             const imageUri = result.assets[0].uri;
             if (isMainImage) {
                 setMainImages({
@@ -89,17 +87,18 @@ export default function AddCarPhotoScreen({ navigation }) {
                     Authorization: `Bearer ${token}`,
                 }
             });
-            console.log('Images uploaded:', response.data);
             navigation.navigate('AddRegist', { carId: carId, based_price: based_price });
+            console.log('Images uploaded:', response.data.message);
+
         } catch (error) {
-            console.log('Error uploading images:', error);
-            if (error.response) {
-                console.log('Server Response:', error.response.data);
-            }
-            if (error.response && error.response.status === 401) {
-                console.log('Unauthorized request. Token may be expired.');
-            } else {
+            if (error.response && error.response.data && error.response.data.error_code === 10023) {
                 Alert.alert('Lỗi', 'Có một vài lỗi xảy ra khi tải lên hình ảnh. Vui lòng thử lại');
+            } else if (error.response && error.response.data && error.response.data.error_code === 10024) {
+                Alert.alert('Lỗi', 'Hình ảnh kích thước quá lớn. Vui lòng chọn hình ảnh khác!');
+            } else if (error.response && error.response.data && error.response.data.message) {
+                Alert.alert('Lỗi', error.response.data.message);
+            } else {
+                Alert.alert('Lỗi', 'Có lỗi xảy ra trong quá trình xử lý yêu cầu.');
             }
         } finally {
             setIsUploading(false);

@@ -30,12 +30,15 @@ export default function RentingFeeScreen() {
                     Authorization: `Bearer ${token}`
                 }
             });
-            console.log('Price updated:', response.data);
+            console.log('Price updated:', response.data.data);
             setIsPriceUpdated(true);
             navigation.navigate('Success');
         } catch (error) {
-            console.log('Error updating price:', error);
-            Alert.alert('Error', 'Failed to update the price. Please try again.');
+            if (error.response.data.error_code === 10058) {
+                Alert.alert('Lỗi', 'Không thể cập nhật giá ngay lúc này');
+            } else {
+                console.log('Error updating price:', response.data.message);
+            }
             setLoading(false);
         }
     };

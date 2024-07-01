@@ -90,14 +90,18 @@ export default function MyCar({ navigation }) {
           },
         });
 
-      const newCars = response.data.cars;
+      const newCars = response.data.data.cars;
       if (newCars.length > 0) {
         // setRegisteredCars(cars => ([...cars, ...newCars]))
         setRegisteredCars(newCars)
       }
       setLoading(false)
     } catch (error) {
-      console.log('Error fetching data:', error);
+      if (error.response.data.error_code === 10026) {
+        Alert.alert('Lỗi', 'Hiện giờ thể lấy dữ liệu các chiếc xe')
+      } else {
+        console.log("Error: ", error.response.data.message)
+      }
     }
   };
 

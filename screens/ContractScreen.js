@@ -30,15 +30,21 @@ export default function ContractScreen({ navigation }) {
           Authorization: `Bearer ${token}`
         }
       });
-      setPdfURL(response.data.url);
-      setContractStatus(response.data.status);
+      setPdfURL(response.data.data.url);
+      setContractStatus(response.data.data.status);
+
       console.log('Fetch contract successfully!');
       setTimeout(() => {
         setLoading(false);
-      }, 1500);
+      }, 2500);
     } catch (error) {
-      console.log('Fetch contract error: ', error);
-      setLoading(false);
+      if (error.response.data.error_code === 10033) {
+        Alert.alert('Lỗi', 'Không thể lấy được trạng thái hợp đồng');
+      } else if (error.response.data.error_code === 10061) {
+        Alert.alert('Lỗi', 'Không thể xem chi tiết hợp đồng lúc này. Vui lòng thử lại sau');
+      } else {
+        Alert.alert('Lỗi', error.response.data.message);
+      }
     }
   };
 
@@ -57,7 +63,7 @@ export default function ContractScreen({ navigation }) {
             Authorization: `Bearer ${token}`
           }
         });
-      console.log('Sign contract successfully!');
+      console.log('Sign contract successfully!: ', response.data.message);
       Alert.alert(
         'Chúc mừng',
         'Bạn đã ký hợp đồng thành công! Vui lòng đợi phản hồi từ MinhHungCar',
@@ -69,8 +75,12 @@ export default function ContractScreen({ navigation }) {
         ]
       );
     } catch (error) {
-      console.log('Sign contract error: ', error);
-      Alert.alert('Lỗi', 'Không thể ký hợp đồng. Vui lòng thử lại!');
+      if (error.response.data.error_code === 10060) {
+        Alert.alert('Lỗi', 'Không thể ký hợp đồng lúc này. Vui lòng thử lại sau');
+      } else {
+        console.log('Sign contract error: ', error.response.data.message);
+        Alert.alert('Lỗi', error.response.data.message);
+      }
     }
   };
 

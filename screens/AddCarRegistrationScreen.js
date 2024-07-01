@@ -41,7 +41,7 @@ export default function AddCarRegistrationScreen({ navigation }) {
     const handleUpload = async () => {
         const { images } = form;
         if (images.some(image => !image.uri)) {
-            Alert.alert('Error', 'Please select all images.');
+            Alert.alert('Lỗi', 'Vui lòng thêm đầy đủ hình ảnh');
             return;
         }
 
@@ -65,11 +65,18 @@ export default function AddCarRegistrationScreen({ navigation }) {
                     Authorization: `Bearer ${token}`,
                 },
             });
-            console.log('Caveat uploaded:', response);
+            console.log('Caveat uploaded:', response.data.message);
             navigation.navigate('RentingFee', { carId: carId, based_price: based_price });
         } catch (error) {
-            console.log('Error uploading caveat:', error);
-            Alert.alert('Lỗi', 'Có một vài lỗi xảy ra khi tải lên hình ảnh. Vui lòng thử lại');
+            console.log('Error uploading caveat:', error.response.data.error_code);
+            if (error.response.data.error_code === 10023) {
+                Alert.alert('Lỗi', 'Có một vài lỗi xảy ra khi tải lên hình ảnh. Vui lòng thử lại');
+            } else if (error.response.data.error_code === 10024) {
+                Alert.alert('Lỗi', 'Hình ảnh kích thước quá lớn. Vui lòng chọn hình ảnh khác!');
+            } else {
+                Alert.alert('Lỗi', 'Có một vài lỗi xảy ra khi tải lên hình ảnh. Vui lòng thử lại');
+
+            }
             setLoading(false);
         }
     };

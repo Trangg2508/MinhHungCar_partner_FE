@@ -10,6 +10,7 @@ import {
   Text,
   Image,
   FlatList,
+  Alert,
 } from 'react-native';
 import { Divider } from 'react-native-paper';
 import Swiper from 'react-native-swiper';
@@ -52,11 +53,15 @@ export default function DetailScreen({ navigation }) {
   const getDetailCar = async () => {
     try {
       const response = await axios.get(`https://minhhungcar.xyz/car/${detailID}`)
-      setDetailCar(response.data)
-      console.log('Fetch successfully: ', response.data)
+      setDetailCar(response.data.data)
+      console.log('Fetch successfully: ', response.data.message)
       setLoading(false)
     } catch (error) {
-      console.log('Fetch failed: ', error)
+      if (error.response.data.error_code === 10027) {
+        Alert.alert('Lỗi', 'Không thể xem được chi tiết xe lúc này. Vui lòng thử lại sau!')
+      } else {
+        console.log("Error: ", error.response.data.message)
+      }
     }
   }
 
